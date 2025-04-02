@@ -92,42 +92,10 @@ class SemanticSegmentationDataset(Dataset):
         if self.dataset_name == "scannet":
             self.color_map = SCANNET_COLOR_MAP_20
             self.color_map[255] = (255, 255, 255)
-        elif self.dataset_name == "stpls3d":
-            self.color_map = {
-                0: [0, 255, 0],  # Ground
-                1: [0, 0, 255],  # Build
-                2: [0, 255, 255],  # LowVeg
-                3: [255, 255, 0],  # MediumVeg
-                4: [255, 0, 255],  # HiVeg
-                5: [100, 100, 255],  # Vehicle
-                6: [200, 200, 100],  # Truck
-                7: [170, 120, 200],  # Aircraft
-                8: [255, 0, 0],  # MilitaryVec
-                9: [200, 100, 100],  # Bike
-                10: [10, 200, 100],  # Motorcycle
-                11: [200, 200, 200],  # LightPole
-                12: [50, 50, 50],  # StreetSign
-                13: [60, 130, 60],  # Clutter
-                14: [130, 30, 60],
-            }  # Fence
         elif self.dataset_name == "scannet200":
             self.color_map = SCANNET_COLOR_MAP_200
-        elif self.dataset_name == "s3dis":
-            self.color_map = {
-                0: [0, 255, 0],  # ceiling
-                1: [0, 0, 255],  # floor
-                2: [0, 255, 255],  # wall
-                3: [255, 255, 0],  # beam
-                4: [255, 0, 255],  # column
-                5: [100, 100, 255],  # window
-                6: [200, 200, 100],  # door
-                7: [170, 120, 200],  # table
-                8: [255, 0, 0],  # chair
-                9: [200, 100, 100],  # sofa
-                10: [10, 200, 100],  # bookcase
-                11: [200, 200, 200],  # board
-                12: [50, 50, 50],  # clutter
-            }
+        elif self.dataset_name == "scannetpp":
+            self.color_map = {0: [0, 255, 0]}
         else:
             assert False, "dataset not known"
 
@@ -183,31 +151,14 @@ class SemanticSegmentationDataset(Dataset):
         self._data = []
         for database_path in self.data_dir:
             database_path = Path(database_path)
-            if self.dataset_name != "s3dis":
-                if not (database_path / f"{mode}_database.yaml").exists():
-                    print(
-                        f"generate {database_path}/{mode}_database.yaml first"
-                    )
-                    exit()
-                self._data.extend(
-                    self._load_yaml(database_path / f"{mode}_database.yaml")
+            if not (database_path / f"{mode}_database.yaml").exists():
+                print(
+                    f"generate {database_path}/{mode}_database.yaml first"
                 )
-            else:
-                mode_s3dis = f"Area_{self.area}"
-                if self.mode == "train":
-                    mode_s3dis = "train_" + mode_s3dis
-                if not (
-                    database_path / f"{mode_s3dis}_database.yaml"
-                ).exists():
-                    print(
-                        f"generate {database_path}/{mode_s3dis}_database.yaml first"
-                    )
-                    exit()
-                self._data.extend(
-                    self._load_yaml(
-                        database_path / f"{mode_s3dis}_database.yaml"
-                    )
-                )
+                exit()
+            self._data.extend(
+                self._load_yaml(database_path / f"{mode}_database.yaml")
+            )
         if data_percent < 1.0:
             self._data = sample(
                 self._data, int(len(self._data) * data_percent)
@@ -215,7 +166,10 @@ class SemanticSegmentationDataset(Dataset):
         labels = self._load_yaml(Path(label_db_filepath))
 
         # if working only on classes for validation - discard others
-        self._labels = self._select_correct_labels(labels, num_labels)
+        if self.dataset_name == "scannetpp":
+            self._labels = {0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
+        else:
+            self._labels = self._select_correct_labels(labels, num_labels)
 
         if instance_oversampling > 0:
             self.instance_data = self._load_yaml(
@@ -223,10 +177,6 @@ class SemanticSegmentationDataset(Dataset):
             )
 
         # normalize color channels
-        if self.dataset_name == "s3dis":
-            color_mean_std = color_mean_std.replace(
-                "color_mean_std.yaml", f"Area_{self.area}_color_mean_std.yaml"
-            )
 
         if Path(str(color_mean_std)).exists():
             color_mean_std = self._load_yaml(color_mean_std)
@@ -258,6 +208,8 @@ class SemanticSegmentationDataset(Dataset):
             )
         # mandatory color augmentation
         if add_colors:
+            color_mean = (0.485, 0.456, 0.406)
+            color_std = (0.229, 0.224, 0.225)
             self.normalize_color = A.Normalize(mean=color_mean, std=color_std)
 
         self.cache_data = cache_data
@@ -409,10 +361,6 @@ class SemanticSegmentationDataset(Dataset):
             assert not self.on_crops, "you need caching if on crops"
             points = np.load(self.data[idx]["filepath"].replace("../../", ""))
 
-        if "train" in self.mode and self.dataset_name in ["s3dis", "stpls3d"]:
-            inds = self.random_cuboid(points)
-            points = points[inds]
-
         coordinates, color, normals, segments, labels = (
             points[:, :3],
             points[:, 3:6],
@@ -420,6 +368,11 @@ class SemanticSegmentationDataset(Dataset):
             points[:, 9],
             points[:, 10:12],
         )
+
+        if self.dataset_name == "scannetpp":
+            # Set the class label of all valid instances to 0
+            labels[labels[:,0]!=-1,0] = 0
+            labels[labels[:,0]!=0,0] = 1
 
         raw_coordinates = coordinates.copy()
         raw_color = color
@@ -641,43 +594,17 @@ class SemanticSegmentationDataset(Dataset):
         ]:
             return self.__getitem__(0)
 
-        if self.dataset_name == "s3dis":
-            return (
-                coordinates,
-                features,
-                labels,
-                self.data[idx]["area"] + "_" + self.data[idx]["scene"],
-                raw_color,
-                raw_normals,
-                raw_coordinates,
-                idx,
-            )
-        if self.dataset_name == "stpls3d":
-            if labels.shape[1] != 1:  # only segments --> test set!
-                if np.unique(labels[:, -2]).shape[0] < 2:
-                    print("NO INSTANCES")
-                    return self.__getitem__(0)
-            return (
-                coordinates,
-                features,
-                labels,
-                self.data[idx]["scene"],
-                raw_color,
-                raw_normals,
-                raw_coordinates,
-                idx,
-            )
-        else:
-            return (
-                coordinates,
-                features,
-                labels,
-                self.data[idx]["raw_filepath"].split("/")[-2],
-                raw_color,
-                raw_normals,
-                raw_coordinates,
-                idx,
-            )
+
+        return (
+            coordinates,
+            features,
+            labels,
+            self.data[idx]["raw_filepath"].split("/")[-2] if self.dataset_name != "scannetpp" else self.data[idx]["raw_filepath"].split("/")[-3],
+            raw_color,
+            raw_normals,
+            raw_coordinates,
+            idx,
+        )
 
     @property
     def data(self):

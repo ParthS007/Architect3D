@@ -18,7 +18,8 @@ def load_ply(filepath):
             [data["red"], data["green"], data["blue"]], dtype=np.uint8
         ).T
     if "label" in data.dtype.names:
-        labels = np.array(data["label"], dtype=np.uint32)
+        labels = np.array(data["label"], dtype=np.int32)
+        labels[labels==-100] = -1
     return coords, feats, labels
 
 
