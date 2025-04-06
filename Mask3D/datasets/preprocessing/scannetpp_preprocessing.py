@@ -8,15 +8,15 @@ from loguru import logger
 import random
 
 from datasets.preprocessing.base_preprocessing import BasePreprocessing
-from utils.point_cloud_utils_scannetpp import load_ply_with_normals
+from utils.point_cloud_utils import load_ply_with_normals
 
-#python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/scratch/dbagci/scannetpp"  --save_dir="/work/scratch/dbagci/scannetpp/processed/" 
+#python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/scratch/dbagci/scannetpp"  --save_dir="/work/scratch/dbagci/processed/scannetpp"
 
 class ScannetPreprocessing(BasePreprocessing):
     def __init__(
         self,
         data_dir: str = "/work/scratch/dbagci/scannetpp",
-        save_dir: str = "/work/scratch/dbagci/scannetpp/processed/",
+        save_dir: str = "/work/scratch/dbagci/processed/scannetpp",
         modes: tuple = ("train", "validation"),
         n_jobs: int = 1,
     ):
