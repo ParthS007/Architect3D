@@ -16,7 +16,7 @@ import scipy
 import volumentations as V
 import yaml
 
-# from yaml import CLoader as Loader
+from yaml import CLoader as Loader
 from torch.utils.data import Dataset
 
 logger = logging.getLogger(__name__)
@@ -27,8 +27,8 @@ class SemanticSegmentationDataset(Dataset):
 
     def __init__(
         self,
-        dataset_name="scannet",
-        data_dir: Optional[Union[str, Tuple[str]]] = "data/processed/scannet",
+        dataset_name="scannetpp",
+        data_dir: Optional[Union[str, Tuple[str]]] = "/work/courses/3dv/20/processed/scannetpp",
         label_db_filepath: Optional[
             str
         ] = "configs/scannet_preprocessing/label_database.yaml",
@@ -589,8 +589,8 @@ class SemanticSegmentationDataset(Dataset):
     @staticmethod
     def _load_yaml(filepath):
         with open(filepath) as f:
-            # file = yaml.load(f, Loader=Loader)
-            file = yaml.load(f)
+            file = yaml.load(f, Loader=Loader)
+            #file = yaml.load(f)
         return file
 
     def _select_correct_labels(self, labels, num_labels):

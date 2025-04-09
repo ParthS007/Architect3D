@@ -17,8 +17,8 @@ from loguru import logger
 class BasePreprocessing:
     def __init__(
         self,
-        data_dir: str = "./data/raw/",
-        save_dir: str = "./data/processed/",
+        data_dir: str = "/work/scratch/dbagci/",
+        save_dir: str = "/work/scratch/dbagci/processed/",
         modes: tuple = ("train", "validation", "test"),
         n_jobs: int = -1,
     ):
@@ -85,7 +85,7 @@ class BasePreprocessing:
 
     def make_instance_database_sequential(
         self,
-        train_database_path: str = "./data/processed/train_database.yaml",
+        train_database_path: str = "/work/scratch/dbagci/processed/scannetpp/train_database.yaml",
         mode="instance",
     ):
         train_database = self._load_yaml(train_database_path)
@@ -97,7 +97,7 @@ class BasePreprocessing:
     @logger.catch
     def make_instance_database(
         self,
-        train_database_path: str = "./data/processed/train_database.yaml",
+        train_database_path: str = "/work/scratch/dbagci/processed/scannetpp/train_database.yaml",
         mode="instance",
     ):
         self.n_jobs = (
@@ -149,7 +149,7 @@ class BasePreprocessing:
 
     def compute_color_mean_std(
         self,
-        train_database_path: str = "./data/processed/train_database.yaml",
+        train_database_path: str = "/work/scratch/dbagci/processed/scannetpp/train_database.yaml",
     ):
         pass
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#SBATCH --time=47:59:59
 #SBATCH --account=3dv
 #SBATCH --output=mask3d.out
 
@@ -10,27 +11,12 @@ CURR_TOPK=300
 CURR_QUERY=150
 CURR_T=0.001
 
-# TRAIN
+# TRAIN python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/scratch/dbagci" --save_dir="/work/scratch/dbagci/processed/scannetpp" \
 python main_instance_segmentation.py \
-general.experiment_name="train3" \
-general.project_name="scannetpp_train3" \
+general.experiment_name="train" \
+general.project_name="scannetpp_train" \
 data/datasets=scannetpp \
 general.eval_on_segments=true \
 general.train_on_segments=true \
-data.train_mode=train_validation
+data.train_mode=train
 
-# TEST
-python main_instance_segmentation.py \
-general.experiment_name="scannetpp_benchmark_query_${CURR_QUERY}_topk_${CURR_TOPK}_dbscan_${CURR_DBSCAN}_export_${CURR_T}_3" \
-general.project_name="scannetpp_eval_3" \
-data/datasets=scannetpp \
-general.eval_on_segments=true \
-general.train_on_segments=true \
-general.train_mode=false \
-model.num_queries=${CURR_QUERY} \
-general.topk_per_image=${CURR_TOPK} \
-general.use_dbscan=true \
-general.dbscan_eps=${CURR_DBSCAN} \
-general.export=true \
-data.test_mode=test \
-general.export_threshold=${CURR_T}

@@ -237,7 +237,7 @@ class Mask3D(nn.Module):
         pcd_features, aux = self.backbone(x)
 
         batch_size = len(x.decomposed_coordinates)
-
+        print("################# Batch Size", batch_size)
         with torch.no_grad():
             coordinates = me.SparseTensor(
                 features=raw_coordinates,

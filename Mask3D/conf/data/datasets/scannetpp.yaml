@@ -2,11 +2,11 @@
 train_dataset:
   _target_: datasets.scannetpp.SemanticSegmentationDataset
   dataset_name: "scannetpp"
-  data_dir: /work/scratch/dbagci/scannetpp/processed
+  data_dir: /work/courses/3dv/20/processed/scannetpp
   image_augmentations_path: conf/augmentation/albumentations_aug.yaml
   volume_augmentations_path: conf/augmentation/volumentations_aug.yaml
-  label_db_filepath: /work/scratch/dbagci/scannetpp/processed/label_database.yaml
-  color_mean_std: /work/scratch/dbagci/scannetpp/processed/color_mean_std.yaml
+  label_db_filepath: /work/courses/3dv/20/processed/scannetpp/label_database.yaml
+  color_mean_std: /work/courses/3dv/20/processed/scannetpp/color_mean_std.yaml
   data_percent: 1.0
   mode: ${data.train_mode}
   ignore_label: ${data.ignore_label}
@@ -35,11 +35,11 @@ train_dataset:
 validation_dataset:
   _target_: datasets.scannetpp.SemanticSegmentationDataset
   dataset_name: "scannetpp"
-  data_dir: data/processed/scannetpp
+  data_dir: /work/courses/3dv/20/processed/scannetpp
   image_augmentations_path: null
   volume_augmentations_path: null
-  label_db_filepath: /work/scratch/dbagci/scannetpp/processed/label_database.yaml
-  color_mean_std: /work/scratch/dbagci/scannetpp/processed/color_mean_std.yaml
+  label_db_filepath: /work/courses/3dv/20/processed/scannetpp/label_database.yaml
+  color_mean_std: /work/courses/3dv/20/processed/scannetpp/color_mean_std.yaml
   data_percent: 1.0
   mode: ${data.validation_mode}
   ignore_label: ${data.ignore_label}
@@ -58,11 +58,11 @@ validation_dataset:
 test_dataset:
   _target_: datasets.scannetpp.SemanticSegmentationDataset
   dataset_name: "scannetpp"
-  data_dir: data/processed/scannetpp
+  data_dir: /work/courses/3dv/20/processed/scannetpp
   image_augmentations_path: null
   volume_augmentations_path: null
-  label_db_filepath: /work/scratch/dbagci/scannetpp/processed/label_database.yaml
-  color_mean_std: /work/scratch/dbagci/scannetpp/processed/color_mean_std.yaml
+  label_db_filepath: /work/courses/3dv/20/processed/scannetpp/label_database.yaml
+  color_mean_std: /work/courses/3dv/20/processed/scannetpp/color_mean_std.yaml
   data_percent: 1.0
   mode: ${data.test_mode}
   ignore_label: ${data.ignore_label}

@@ -15,24 +15,24 @@ from utils.point_cloud_utils import load_ply_with_normals
 class ScannetPreprocessing(BasePreprocessing):
     def __init__(
         self,
-        data_dir: str = "/work/scratch/dbagci/scannetpp",
-        save_dir: str = "/work/scratch/dbagci/processed/scannetpp",
+        data_dir: str = "/work/courses/3dv/20/scannetpp",
+        save_dir: str = "/work/courses/3dv/20/processed/scannetpp",
         modes: tuple = ("train", "validation"),
         n_jobs: int = 1,
     ):
         super().__init__(data_dir, save_dir, modes, n_jobs)
 
-        with open('/work/scratch/dbagci/scannetpp/metadata/instance_classes.txt', 'r') as file:
+        with open('/work/courses/3dv/20/scannetpp/metadata/instance_classes.txt', 'r') as file:
             self.labels_pd = file.readlines()
         
         self.labels_pd = [x.strip() for x in self.labels_pd]
 
         self.create_label_database()
         for mode in self.modes:
-            trainval_split_dir = '/work/scratch/dbagci/scannetpp/splits'
+            trainval_split_dir = '/work/courses/3dv/20/scannetpp/splits'
             scannet_special_mode = "val" if mode == "validation" else mode
             with open(
-                f"/work/scratch/dbagci/scannetpp/splits/nvs_sem_{scannet_special_mode}.txt"
+                f"/work/courses/3dv/20/scannetpp/splits/nvs_sem_{scannet_special_mode}.txt"
             ) as f:
                 # -1 because the last one is always empty
                 split_file = f.read().split("\n")[:-1]
@@ -161,7 +161,7 @@ class ScannetPreprocessing(BasePreprocessing):
 
     def compute_color_mean_std(
         self,
-        train_database_path: str = "./data/processed/scannet/train_database.yaml",
+        train_database_path: str = "/work/scratch/dbagci/processed/scannetpp/train_database.yaml",
     ):
         train_database = self._load_yaml(train_database_path)
         color_mean, color_std = [], []
