@@ -5,6 +5,7 @@
 third_party/MinkowskiEngine
 third_party/ScanNet
 *.out
+/jobs
 
 .vscode/
 

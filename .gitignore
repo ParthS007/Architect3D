@@ -5,6 +5,7 @@ openarchitect3d
 __pycache__/
 *.py[cod]
 *$py.class
+*.ckpt
 
 # C extensions
 *.so
