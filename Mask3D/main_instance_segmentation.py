@@ -112,7 +112,7 @@ def main(cfg: DictConfig):
 
 
 if __name__ == "__main__":
-    """
+
     checkpoint = torch.load('/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt')
     state_dict = checkpoint["state_dict"]
     for key in list(state_dict.keys()):
@@ -128,8 +128,8 @@ if __name__ == "__main__":
             state_dict[key] = torch.zeros(2753)
         else:
             pass
-    state_dict["criterion.empty_weight"] = torch.zeros(2753)
+    #state_dict["criterion.empty_weight"] = torch.zeros(2753)
     checkpoint["state_dict"] = state_dict
     torch.save(checkpoint, '/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt')
-    """
+    
     main()
