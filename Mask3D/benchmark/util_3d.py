@@ -30,20 +30,20 @@ def transform_points(matrix, points):
 
 
 def export_ids(filename, ids):
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         for id in ids:
             f.write("%d\n" % id)
 
 
 def load_ids(filename):
-    ids = open(filename).read().splitlines()
+    ids = open(filename, encoding="utf-8").read().splitlines()
     ids = np.array(ids, dtype=np.int64)
     return ids
 
 
 def read_mesh_vertices(filename):
     assert os.path.isfile(filename)
-    with open(filename, "rb") as f:
+    with open(filename, "rb", encoding="utf-8") as f:
         plydata = PlyData.read(f)
         num_verts = plydata["vertex"].count
         vertices = np.zeros(shape=[num_verts, 3], dtype=np.float32)
@@ -65,7 +65,7 @@ def export_instance_ids_for_eval(filename, label_ids, instance_ids):
         os.mkdir(output_mask_path)
     insts = np.unique(instance_ids)
     zero_mask = np.zeros(shape=(instance_ids.shape[0]), dtype=np.int32)
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         for idx, inst_id in enumerate(insts):
             if inst_id == 0:  # 0 -> no instance for this vertex
                 continue
@@ -133,7 +133,7 @@ class Instance(object):
 
 
 def read_instance_prediction_file(filename, pred_path):
-    lines = open(filename).read().splitlines()
+    lines = open(filename, encoding="utf-8").read().splitlines()
     instance_info = {}
     abs_pred_path = os.path.abspath(pred_path)
     for line in lines:

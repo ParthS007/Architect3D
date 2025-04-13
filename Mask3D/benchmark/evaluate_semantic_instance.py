@@ -441,7 +441,7 @@ def print_results(avgs):
 
 def write_result_file(avgs, filename):
     _SPLITTER = ","
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         f.write(
             _SPLITTER.join(["class", "class id", "ap", "ap50", "ap25"]) + "\n"
         )

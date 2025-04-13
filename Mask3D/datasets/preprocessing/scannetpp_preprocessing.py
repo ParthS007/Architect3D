@@ -22,7 +22,7 @@ class ScannetPreprocessing(BasePreprocessing):
     ):
         super().__init__(data_dir, save_dir, modes, n_jobs)
 
-        with open('/work/courses/3dv/20/scannetpp/metadata/instance_classes.txt', 'r') as file:
+        with open('/work/courses/3dv/20/scannetpp/metadata/instance_classes.txt', 'r', encoding="utf-8") as file:
             self.labels_pd = file.readlines()
         
         self.labels_pd = [x.strip() for x in self.labels_pd]
@@ -32,7 +32,7 @@ class ScannetPreprocessing(BasePreprocessing):
             trainval_split_dir = '/work/courses/3dv/20/scannetpp/splits'
             scannet_special_mode = "val" if mode == "validation" else mode
             with open(
-                f"/work/courses/3dv/20/scannetpp/splits/nvs_sem_{scannet_special_mode}.txt"
+                f"/work/courses/3dv/20/scannetpp/splits/nvs_sem_{scannet_special_mode}.txt", encoding="utf-8"
             ) as f:
                 # -1 because the last one is always empty
                 split_file = f.read().split("\n")[:-1]

@@ -618,7 +618,7 @@ class SemanticSegmentationDataset(Dataset):
 
     @staticmethod
     def _load_yaml(filepath):
-        with open(filepath) as f:
+        with open(filepath, encoding="utf-8") as f:
             # file = yaml.load(f, Loader=Loader)
             file = yaml.load(f)
         return file

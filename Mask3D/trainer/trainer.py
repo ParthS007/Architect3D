@@ -1046,7 +1046,7 @@ class InstanceSegmentation(pl.LightningModule):
                 pred_path,
                 dataset=self.validation_dataset.dataset_name,
             )
-            with open(pred_path, "r") as fin:
+            with open(pred_path, "r", encoding="utf-8") as fin:
                 for line_id, line in enumerate(fin):
                     if line_id == 0:
                         # ignore header

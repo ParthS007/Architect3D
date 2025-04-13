@@ -35,7 +35,7 @@ def read_label_mapping(
 ):
     assert os.path.isfile(filename)
     mapping = dict()
-    with open(filename) as csvfile:
+    with open(filename, encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile, delimiter="\t")
         for row in reader:
             mapping[row[label_from]] = int(row[label_to])
@@ -49,7 +49,7 @@ def read_label_mapping(
 def read_scene_types_mapping(filename, remove_spaces=True):
     assert os.path.isfile(filename)
     mapping = dict()
-    lines = open(filename).read().splitlines()
+    lines = open(filename, encoding="utf-8").read().splitlines()
     lines = [line.split("\t") for line in lines]
     if remove_spaces:
         mapping = {x[1].strip(): int(x[0]) for x in lines}

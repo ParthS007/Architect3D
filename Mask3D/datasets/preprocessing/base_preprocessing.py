@@ -170,13 +170,13 @@ class BasePreprocessing:
 
     @classmethod
     def _read_json(cls, path):
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             file = json.load(f)
         return file
 
     @classmethod
     def _save_yaml(cls, path, file):
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             yaml.safe_dump(
                 file, f, default_style=None, default_flow_style=False
             )
@@ -195,7 +195,7 @@ class BasePreprocessing:
 
     @classmethod
     def _load_yaml(cls, filepath):
-        with open(filepath) as f:
+        with open(filepath, encoding="utf-8") as f:
             file = yaml.safe_load(f)
         return file
 
