@@ -50,7 +50,7 @@ def get_evenly_distributed_colors(
 
 class RegularCheckpointing(pl.Callback):
     def on_train_epoch_end(
-        self, trainer: "pl.Trainer", pl_module: "pl.LightningModule"
+        self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", outputs=None
     ):
         general = pl_module.config.general
         trainer.save_checkpoint(f"{general.save_dir}/last-epoch.ckpt")
@@ -199,7 +199,7 @@ class InstanceSegmentation(pl.LightningModule):
         logs["train_mean_loss_dice"] = statistics.mean(
             [item for item in [v for k, v in logs.items() if "loss_dice" in k]]
         )
-
+        torch.cuda.empty_cache()
         self.log_dict(logs)
         return sum(losses.values())
 
@@ -684,7 +684,7 @@ class InstanceSegmentation(pl.LightningModule):
                                 DBSCAN(
                                     eps=self.config.general.dbscan_eps,
                                     min_samples=self.config.general.dbscan_min_points,
-                                    n_jobs=-1,
+                                    n_jobs=4,
                                 )
                                 .fit(curr_coords[curr_masks])
                                 .labels_
@@ -1026,6 +1026,7 @@ class InstanceSegmentation(pl.LightningModule):
             "scannet",
             "stpls3d",
             "scannet200",
+            "scannetpp"
         ]:
             gt_data_path = f"{self.validation_dataset.data_dir[0]}/instance_gt/{self.validation_dataset.mode}"
         else:
@@ -1039,38 +1040,12 @@ class InstanceSegmentation(pl.LightningModule):
             os.makedirs(base_path)
 
         try:
-            if self.validation_dataset.dataset_name == "s3dis":
-                new_preds = {}
-                for key in self.preds.keys():
-                    new_preds[
-                        key.replace(f"Area_{self.config.general.area}_", "")
-                    ] = {
-                        "pred_classes": self.preds[key]["pred_classes"] + 1,
-                        "pred_masks": self.preds[key]["pred_masks"],
-                        "pred_scores": self.preds[key]["pred_scores"],
-                    }
-                mprec, mrec = evaluate(
-                    new_preds, gt_data_path, pred_path, dataset="s3dis"
-                )
-                ap_results[f"{log_prefix}_mean_precision"] = mprec
-                ap_results[f"{log_prefix}_mean_recall"] = mrec
-            elif self.validation_dataset.dataset_name == "stpls3d":
-                new_preds = {}
-                for key in self.preds.keys():
-                    new_preds[key.replace(".txt", "")] = {
-                        "pred_classes": self.preds[key]["pred_classes"],
-                        "pred_masks": self.preds[key]["pred_masks"],
-                        "pred_scores": self.preds[key]["pred_scores"],
-                    }
-
-                evaluate(new_preds, gt_data_path, pred_path, dataset="stpls3d")
-            else:
-                evaluate(
-                    self.preds,
-                    gt_data_path,
-                    pred_path,
-                    dataset=self.validation_dataset.dataset_name,
-                )
+            evaluate(
+                self.preds,
+                gt_data_path,
+                pred_path,
+                dataset=self.validation_dataset.dataset_name,
+            )
             with open(pred_path, "r") as fin:
                 for line_id, line in enumerate(fin):
                     if line_id == 0:

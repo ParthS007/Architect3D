@@ -154,7 +154,7 @@ class SemanticSegmentationDataset(Dataset):
             )
 
         labels = self._load_yaml(Path(label_db_filepath))
-        self._labels = {0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
+        self._labels = self._select_correct_labels(labels, num_labels) #{0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
 
         if instance_oversampling > 0:
             self.instance_data = self._load_yaml(
@@ -172,9 +172,16 @@ class SemanticSegmentationDataset(Dataset):
         elif len(color_mean_std[0]) == 3 and len(color_mean_std[1]) == 3:
             color_mean, color_std = color_mean_std[0], color_mean_std[1]
         else:
-            logger.error(
-                "pass mean and std as tuple of tuples, or as an .yaml file"
-            )
+            color_mean_std = (
+            (0.47793125906962, 0.4303257521323044, 0.3749598901421883),
+            (0.2834475483823543, 0.27566157565723015, 0.27018971370874995),
+            ),
+            color_mean = (0.47793125906962, 0.4303257521323044, 0.3749598901421883)
+            color_std = (0.2834475483823543, 0.27566157565723015, 0.27018971370874995)
+
+            #logger.error(
+            #    "pass mean and std as tuple of tuples, or as an .yaml file"
+            #)
 
         # augmentations
         self.volume_augmentations = V.NoOp()
@@ -603,7 +610,7 @@ class SemanticSegmentationDataset(Dataset):
             number_of_all_labels += 1
             if v["validation"]:
                 number_of_validation_labels += 1
-
+        print("number of all labels", num_labels, "######")
         if num_labels == number_of_all_labels:
             return labels
         elif num_labels == number_of_validation_labels:

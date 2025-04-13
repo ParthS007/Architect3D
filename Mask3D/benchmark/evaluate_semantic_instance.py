@@ -31,6 +31,7 @@ import os, sys, argparse
 import inspect
 from copy import deepcopy
 from uuid import uuid4
+from datasets.scannetpp_constants import SCANNETPP_CLASS_LABLES
 
 import torch
 
@@ -352,7 +353,7 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
         pred2gt[label] = []
     num_pred_instances = 0
     # mask of void labels in the groundtruth
-    bool_void = np.logical_not(np.in1d(gt_ids // 1000, VALID_CLASS_IDS))
+    bool_void = (gt_ids == 0) #bool_void = np.logical_not(np.in1d(gt_ids // 1000, VALID_CLASS_IDS))
     # go thru all prediction masks
     for uuid in pred_info:
         label_id = int(pred_info[uuid]["label_id"])
@@ -939,6 +940,19 @@ def evaluate(
         for i in range(len(VALID_CLASS_IDS)):
             LABEL_TO_ID[CLASS_LABELS[i]] = VALID_CLASS_IDS[i]
             ID_TO_LABEL[VALID_CLASS_IDS[i]] = CLASS_LABELS[i]
+
+    if dataset == "scannetpp":
+
+        opt["min_region_sizes"] = np.array([100])
+
+        CLASS_LABELS = SCANNETPP_CLASS_LABLES
+        VALID_CLASS_IDS = np.arange(1, 2754)
+        ID_TO_LABEL = {}
+        LABEL_TO_ID = {}
+        for i in range(len(VALID_CLASS_IDS)):
+            LABEL_TO_ID[CLASS_LABELS[i]] = VALID_CLASS_IDS[i]
+            ID_TO_LABEL[VALID_CLASS_IDS[i]] = CLASS_LABELS[i]
+
 
     total_true = 0
     total_seen = 0
