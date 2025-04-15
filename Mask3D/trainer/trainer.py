@@ -113,6 +113,7 @@ class InstanceSegmentation(pl.LightningModule):
         # misc
         self.labels_info = dict()
 
+        self.prepare_data()
     def forward(
         self, x, point2segment=None, raw_coordinates=None, is_eval=False
     ):
@@ -988,7 +989,7 @@ class InstanceSegmentation(pl.LightningModule):
     def eval_instance_epoch_end(self):
         log_prefix = f"val"
         ap_results = {}
-
+        """
         head_results, tail_results, common_results = [], [], []
 
         box_ap_50 = eval_det(
@@ -1018,7 +1019,7 @@ class InstanceSegmentation(pl.LightningModule):
             ap_results[f"{log_prefix}_{class_name}_val_box_ap_25"] = box_ap_25[
                 -1
             ][class_id]
-
+        """
         root_path = f"eval_output"
         base_path = f"{root_path}/instance_evaluation_{self.config.general.experiment_name}_{self.current_epoch}"
 

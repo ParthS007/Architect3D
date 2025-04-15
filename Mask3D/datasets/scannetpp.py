@@ -84,7 +84,7 @@ class SemanticSegmentationDataset(Dataset):
         self.color_drop = color_drop
 
         if self.dataset_name == "scannetpp":
-            self.color_map = {0: [0, 255, 0]}
+            self.color_map = {0: [0, 255, 0], **{i: np.random.randint(0, 256, 3).tolist() for i in range(1,  2754)}}
         else:
             assert False, "dataset not known"
 
@@ -610,7 +610,7 @@ class SemanticSegmentationDataset(Dataset):
             number_of_all_labels += 1
             if v["validation"]:
                 number_of_validation_labels += 1
-        print("number of all labels", num_labels, "######")
+
         if num_labels == number_of_all_labels:
             return labels
         elif num_labels == number_of_validation_labels:
