@@ -10,7 +10,7 @@ import random
 from datasets.preprocessing.base_preprocessing import BasePreprocessing
 from utils.point_cloud_utils import load_ply_with_normals
 
-#python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/scratch/dbagci/scannetpp"  --save_dir="/work/scratch/dbagci/processed/scannetpp"
+#python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/courses/3dv/20/processed/scannetpp"
 
 class ScannetPreprocessing(BasePreprocessing):
     def __init__(
@@ -18,7 +18,7 @@ class ScannetPreprocessing(BasePreprocessing):
         data_dir: str = "/work/courses/3dv/20/scannetpp",
         save_dir: str = "/work/courses/3dv/20/processed/scannetpp",
         modes: tuple = ("train", "validation"),
-        n_jobs: int = 1,
+        n_jobs: int = 4,
     ):
         super().__init__(data_dir, save_dir, modes, n_jobs)
 

@@ -16,7 +16,6 @@ from utils.utils import (
 from pytorch_lightning import Trainer, seed_everything
 import torch
 
-
 def get_parameters(cfg: DictConfig):
     logger = logging.getLogger(__name__)
     load_dotenv(".env")
@@ -45,7 +44,6 @@ def get_parameters(cfg: DictConfig):
         ] = f"{cfg.general.save_dir}/last-epoch.ckpt" #"/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt" #f"{cfg.general.save_dir}/last-epoch.ckpt"
 
     for log in cfg.logging:
-        print(log)
         loggers.append(hydra.utils.instantiate(log))
         loggers[-1].log_hyperparams(
             flatten_dict(OmegaConf.to_container(cfg, resolve=True))

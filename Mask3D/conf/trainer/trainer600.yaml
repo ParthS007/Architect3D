@@ -1,7 +1,7 @@
 # @package _group_
 deterministic: false
-max_epochs: 150
+max_epochs: 75
 min_epochs: 1
-resume_from_checkpoint: null #"/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt"
-check_val_every_n_epoch: 1
+resume_from_checkpoint: null #"/work/courses/3dv/20/OpenArchitect3D/Mask3D/saved/train4/last-epoch.ckpt"
+check_val_every_n_epoch: 10
 num_sanity_val_steps: 2

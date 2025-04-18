@@ -18,7 +18,7 @@ general:
   project_name: scannet
   workspace: jonasschult
   experiment_name: DEBUG_ABLATION
-  num_targets: 2753
+  num_targets: 2752
   add_instance: true
   dbscan_eps: 0.95
   dbscan_min_points: 1
@@ -41,7 +41,7 @@ general:
 
   ignore_mask_idx: []
 
-  max_batch_size: 9999999
+  max_batch_size: 99999999
 
   save_dir: saved/${general.experiment_name}
   # time/commit/md5(config)_uuid

@@ -154,7 +154,7 @@ class SemanticSegmentationDataset(Dataset):
             )
 
         labels = self._load_yaml(Path(label_db_filepath))
-        self._labels = self._select_correct_labels(labels, num_labels) #{0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
+        self._labels = labels #self._select_correct_labels(labels, num_labels) #{0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
 
         if instance_oversampling > 0:
             self.instance_data = self._load_yaml(
