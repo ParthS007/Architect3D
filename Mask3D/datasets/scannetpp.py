@@ -28,7 +28,7 @@ class SemanticSegmentationDataset(Dataset):
     def __init__(
         self,
         dataset_name="scannetpp",
-        data_dir: Optional[Union[str, Tuple[str]]] = "/work/courses/3dv/20/processed/scannetpp",
+        data_dir: Optional[Union[str, Tuple[str]]] = "/work/scratch/dbagci/processed/scannetpp",
         label_db_filepath: Optional[
             str
         ] = "configs/scannet_preprocessing/label_database.yaml",
@@ -82,11 +82,6 @@ class SemanticSegmentationDataset(Dataset):
         self.dataset_name = dataset_name
         self.is_elastic_distortion = is_elastic_distortion
         self.color_drop = color_drop
-
-        if self.dataset_name == "scannetpp":
-            self.color_map = {0: [0, 255, 0], **{i: np.random.randint(0, 256, 3).tolist() for i in range(1,  2754)}}
-        else:
-            assert False, "dataset not known"
 
         self.task = task
 
@@ -155,6 +150,12 @@ class SemanticSegmentationDataset(Dataset):
 
         labels = self._load_yaml(Path(label_db_filepath))
         self._labels = labels #self._select_correct_labels(labels, num_labels) #{0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
+
+        if self.dataset_name == "scannetpp":
+            self.color_map = {int(k): v["color"] for k, v in self._labels.items()}
+            #self.color_map = {0: [0, 255, 0], **{i: np.random.randint(0, 256, 3).tolist() for i in range(1,  2754)}}
+        else:
+            assert False, "dataset not known"
 
         if instance_oversampling > 0:
             self.instance_data = self._load_yaml(
@@ -275,6 +276,7 @@ class SemanticSegmentationDataset(Dataset):
                 self._data = new_data
                 # new_data.append(np.load(self.data[i]["filepath"].replace("../../", "")))
             # self._data = new_data
+        print(f"############## Loaded {len(self._data)} scans from {self.data_dir}")        
 
     def splitPointCloud(self, cloud, size=50.0, stride=50, inner_core=-1):
         if inner_core == -1:
@@ -576,7 +578,7 @@ class SemanticSegmentationDataset(Dataset):
             coordinates,
             features,
             labels,
-            self.data[idx]["raw_filepath"].split("/")[-3],
+            self.data[idx]["raw_filepath"].split("/")[-2],
             raw_color,
             raw_normals,
             raw_coordinates,
@@ -637,11 +639,12 @@ class SemanticSegmentationDataset(Dataset):
         return labels
 
     def _remap_model_output(self, output):
-        output = np.array(output)
-        output_remapped = output.copy()
-        for i, k in enumerate(self.label_info.keys()):
-            output_remapped[output == i] = k
-        return output_remapped
+        #output = np.array(output)
+        #output_remapped = output.copy()
+        #for i, k in enumerate(self.label_info.keys()):
+        #    output_remapped[output == i] = k
+        #return output_remapped
+        return output
 
     def augment_individual_instance(
         self, coordinates, color, normals, labels, oversampling=1.0

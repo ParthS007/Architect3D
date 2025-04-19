@@ -16,9 +16,9 @@ class ScannetPreprocessing(BasePreprocessing):
     def __init__(
         self,
         data_dir: str = "/work/courses/3dv/20/scannetpp",
-        save_dir: str = "/work/courses/3dv/20/processed/scannetpp",
+        save_dir: str = "/work/scratch/dbagci/processed/scannetpp",
         modes: tuple = ("train", "validation"),
-        n_jobs: int = 4,
+        n_jobs: int = 8,
     ):
         super().__init__(data_dir, save_dir, modes, n_jobs)
 
@@ -72,7 +72,9 @@ class ScannetPreprocessing(BasePreprocessing):
         Returns:
             filebase: info about file
         """
-        scene = filepath.parent.parent.name
+        scene = filepath.parent.name
+        print(f"############################")
+        print(f"Processing scene {scene} and in filepath {filepath}...")
         filebase = {
             "filepath": filepath,
             "scene": scene,

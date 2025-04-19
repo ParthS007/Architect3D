@@ -110,24 +110,23 @@ def main(cfg: DictConfig):
 
 
 if __name__ == "__main__":
-
     checkpoint = torch.load('/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt')
     state_dict = checkpoint["state_dict"]
     for key in list(state_dict.keys()):
         #if key in ["model.backbone.final.kernel", "model.backbone.final.bias", "model.class_embed_head.weight", "model.class_embed_head.bias"]:
         #    del state_dict[key]
         if key == "model.backbone.final.kernel":
-            state_dict[key] = torch.zeros(96, 2753)
+            state_dict[key] = torch.zeros(96, 2754)
         elif key == "model.backbone.final.bias":
-            state_dict[key] = torch.zeros(1, 2753)
+            state_dict[key] = torch.zeros(1, 2754)
         elif key == "model.class_embed_head.weight":
-            state_dict[key] = torch.zeros(2753, 128)
+            state_dict[key] = torch.zeros(2754, 128)
         elif key == "model.class_embed_head.bias":
-            state_dict[key] = torch.zeros(2753)
+            state_dict[key] = torch.zeros(2754)
         else:
             pass
     #state_dict["criterion.empty_weight"] = torch.zeros(2753)
     checkpoint["state_dict"] = state_dict
     torch.save(checkpoint, '/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt')
-    
+
     main()

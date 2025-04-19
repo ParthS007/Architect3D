@@ -82,6 +82,8 @@ CLASS_LABELS = [
 VALID_CLASS_IDS = np.array(
     [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36, 39]
 )
+CLASS_LABELS = SCANNETPP_CLASS_LABLES
+VALID_CLASS_IDS = np.arange(1, len(SCANNETPP_CLASS_LABLES) + 1)
 ID_TO_LABEL = {}
 LABEL_TO_ID = {}
 for i in range(len(VALID_CLASS_IDS)):
@@ -473,7 +475,7 @@ def evaluate(
         opt["min_region_sizes"] = np.array([100])
 
         CLASS_LABELS = SCANNETPP_CLASS_LABLES
-        VALID_CLASS_IDS = np.arange(1, 2754)
+        VALID_CLASS_IDS = np.arange(1, len(SCANNETPP_CLASS_LABLES) + 1)
         ID_TO_LABEL = {}
         LABEL_TO_ID = {}
         for i in range(len(VALID_CLASS_IDS)):

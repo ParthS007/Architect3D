@@ -128,7 +128,7 @@ class InstanceSegmentation(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         data, target, file_names = batch
-
+        
         if data.features.shape[0] > self.config.general.max_batch_size:
             print("data exceeds threshold")
             raise RuntimeError("BATCH TOO BIG")
@@ -205,9 +205,11 @@ class InstanceSegmentation(pl.LightningModule):
         return sum(losses.values())
 
     def validation_step(self, batch, batch_idx):
+        print(f"VALIDATION STEP: batch_idx={batch_idx}")
         return self.eval_step(batch, batch_idx)
 
     def export(self, pred_masks, scores, pred_classes, file_names, decoder_id):
+        print(f"Exporting predictions for: {file_names}")
         root_path = f"eval_output"
         base_path = f"{root_path}/instance_evaluation_{self.config.general.experiment_name}_{self.current_epoch}/decoder_{decoder_id}"
         pred_mask_path = f"{base_path}/pred_mask"
@@ -242,6 +244,8 @@ class InstanceSegmentation(pl.LightningModule):
         self.log_dict(results)
 
     def validation_epoch_end(self, outputs):
+        print(f"VALIDATION EPOCH END: {len(outputs)} batches processed")
+        print(f"Validation outputs: {len(outputs)}")
         self.test_epoch_end(outputs)
 
     def save_visualizations(
@@ -548,7 +552,7 @@ class InstanceSegmentation(pl.LightningModule):
             if self.config.general.save_visualizations
             else None,
         )
-
+        torch.cuda.empty_cache()
         if self.config.data.test_mode != "test":
             return {
                 f"val_{k}": v.detach().cpu().item() for k, v in losses.items()
@@ -634,7 +638,7 @@ class InstanceSegmentation(pl.LightningModule):
                 "pred_masks": output["pred_masks"],
             }
         )
-
+        torch.cuda.empty_cache()
         prediction[self.decoder_id][
             "pred_logits"
         ] = torch.functional.F.softmax(
@@ -820,7 +824,8 @@ class InstanceSegmentation(pl.LightningModule):
                 target_full_res[bid]["labels"][
                     target_full_res[bid]["labels"] == 0
                 ] = -1
-
+        print("all_pred_classes[bid]", all_pred_classes[bid])
+        print("len(prediction[self.decoder_id][pred_masks])", len(prediction[self.decoder_id]["pred_masks"]))
         for bid in range(len(prediction[self.decoder_id]["pred_masks"])):
             all_pred_classes[
                 bid
@@ -893,7 +898,9 @@ class InstanceSegmentation(pl.LightningModule):
 
                 self.bbox_gt[file_names[bid]] = bbox_data
 
+            print("Stored predictions for key:", file_names)
             if self.config.general.eval_inner_core == -1:
+
                 self.preds[file_names[bid]] = {
                     "pred_masks": all_pred_masks[bid],
                     "pred_scores": all_pred_scores[bid],
@@ -908,6 +915,8 @@ class InstanceSegmentation(pl.LightningModule):
                     "pred_scores": all_pred_scores[bid],
                     "pred_classes": all_pred_classes[bid],
                 }
+
+                print("Stored predictions for key:", file_names[bid])
 
             if self.config.general.save_visualizations:
                 if "cond_inner" in self.test_dataset.data[idx[bid]]:
@@ -978,6 +987,7 @@ class InstanceSegmentation(pl.LightningModule):
                         self.decoder_id,
                     )
                 else:
+                    print(f"Exporting for file: {file_names[bid]}")
                     self.export(
                         self.preds[file_names[bid]]["pred_masks"],
                         self.preds[file_names[bid]]["pred_scores"],
@@ -985,6 +995,8 @@ class InstanceSegmentation(pl.LightningModule):
                         file_names[bid],
                         self.decoder_id,
                     )
+        
+        print("Current scan keys in self.preds:", list(self.preds.keys()))
 
     def eval_instance_epoch_end(self):
         log_prefix = f"val"
