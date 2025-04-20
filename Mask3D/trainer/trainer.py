@@ -638,7 +638,9 @@ class InstanceSegmentation(pl.LightningModule):
                 "pred_masks": output["pred_masks"],
             }
         )
+        del output
         torch.cuda.empty_cache()
+        
         prediction[self.decoder_id][
             "pred_logits"
         ] = torch.functional.F.softmax(
@@ -695,18 +697,16 @@ class InstanceSegmentation(pl.LightningModule):
                                 .labels_
                             )
 
-                            new_mask = torch.zeros(curr_masks.shape, dtype=int)
-                            new_mask[curr_masks] = (
-                                torch.from_numpy(clusters) + 1
-                            )
+                            new_mask = np.zeros(curr_masks.shape, dtype=int)
+                            new_mask[curr_masks] = clusters + 1
 
                             for cluster_id in np.unique(clusters):
-                                original_pred_masks = masks[:, curr_query]
+                                original_pred_masks = masks[:, curr_query].numpy()
                                 if cluster_id != -1:
                                     new_preds["pred_masks"].append(
-                                        original_pred_masks
+                                        torch.from_numpy(original_pred_masks
                                         * (new_mask == cluster_id + 1)
-                                    )
+                                    ))
                                     new_preds["pred_logits"].append(
                                         prediction[self.decoder_id][
                                             "pred_logits"
@@ -719,6 +719,7 @@ class InstanceSegmentation(pl.LightningModule):
                         len(new_preds["pred_logits"]),
                         self.model.num_classes - 1,
                     )
+
                 else:
                     scores, masks, classes, heatmap = self.get_mask_and_scores(
                         prediction[self.decoder_id]["pred_logits"][bid]
@@ -730,6 +731,9 @@ class InstanceSegmentation(pl.LightningModule):
                         ],
                         self.model.num_classes - 1,
                     )
+
+                scores = torch.ones(masks.shape[1])
+                classes = torch.zeros(masks.shape[1])
 
                 masks = self.get_full_res_mask(
                     masks,
@@ -768,8 +772,8 @@ class InstanceSegmentation(pl.LightningModule):
                     device="cpu",
                 )
 
-            masks = masks.numpy()
-            heatmap = heatmap.numpy()
+            masks = masks.numpy().astype(bool)
+            heatmap = heatmap.numpy().astype(bool)
 
             sort_scores = scores.sort(descending=True)
             sort_scores_index = sort_scores.indices.cpu().numpy()
@@ -842,65 +846,9 @@ class InstanceSegmentation(pl.LightningModule):
                 ] = self.validation_dataset._remap_model_output(
                     target_full_res[bid]["labels"].cpu() + label_offset
                 )
-
-                # PREDICTION BOX
-                bbox_data = []
-                for query_id in range(
-                    all_pred_masks[bid].shape[1]
-                ):  # self.model.num_queries
-                    obj_coords = full_res_coords[bid][
-                        all_pred_masks[bid][:, query_id].astype(bool), :
-                    ]
-                    if obj_coords.shape[0] > 0:
-                        obj_center = obj_coords.mean(axis=0)
-                        obj_axis_length = obj_coords.max(
-                            axis=0
-                        ) - obj_coords.min(axis=0)
-
-                        bbox = np.concatenate((obj_center, obj_axis_length))
-
-                        bbox_data.append(
-                            (
-                                all_pred_classes[bid][query_id].item(),
-                                bbox,
-                                all_pred_scores[bid][query_id],
-                            )
-                        )
-                self.bbox_preds[file_names[bid]] = bbox_data
-
-                # GT BOX
-                bbox_data = []
-                for obj_id in range(target_full_res[bid]["masks"].shape[0]):
-                    if target_full_res[bid]["labels"][obj_id].item() == 255:
-                        continue
-
-                    obj_coords = full_res_coords[bid][
-                        target_full_res[bid]["masks"][obj_id, :]
-                        .cpu()
-                        .detach()
-                        .numpy()
-                        .astype(bool),
-                        :,
-                    ]
-                    if obj_coords.shape[0] > 0:
-                        obj_center = obj_coords.mean(axis=0)
-                        obj_axis_length = obj_coords.max(
-                            axis=0
-                        ) - obj_coords.min(axis=0)
-
-                        bbox = np.concatenate((obj_center, obj_axis_length))
-                        bbox_data.append(
-                            (
-                                target_full_res[bid]["labels"][obj_id].item(),
-                                bbox,
-                            )
-                        )
-
-                self.bbox_gt[file_names[bid]] = bbox_data
-
+                
             print("Stored predictions for key:", file_names)
             if self.config.general.eval_inner_core == -1:
-
                 self.preds[file_names[bid]] = {
                     "pred_masks": all_pred_masks[bid],
                     "pred_scores": all_pred_scores[bid],
@@ -917,7 +865,6 @@ class InstanceSegmentation(pl.LightningModule):
                 }
 
                 print("Stored predictions for key:", file_names[bid])
-
             if self.config.general.save_visualizations:
                 if "cond_inner" in self.test_dataset.data[idx[bid]]:
                     target_full_res[bid]["masks"] = target_full_res[bid][
@@ -1235,7 +1182,7 @@ class InstanceSegmentation(pl.LightningModule):
         dd["val_mean_loss_dice"] = statistics.mean(
             [item for item in [v for k, v in dd.items() if "loss_dice" in k]]
         )
-
+        dd["val_mean_loss"] = dd["val_mean_loss_ce"] + dd["val_mean_loss_mask"] + dd["val_mean_loss_dice"]
         self.log_dict(dd)
 
     def configure_optimizers(self):

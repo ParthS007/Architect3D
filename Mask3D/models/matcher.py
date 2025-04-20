@@ -114,12 +114,18 @@ class HungarianMatcher(nn.Module):
                 -1
             )  # [num_queries, num_classes]
             tgt_ids = targets[b]["labels"].clone()
-
+            if (tgt_ids < 0).any() or (tgt_ids >= out_prob.shape[1]).any():
+                print("Maximum", out_prob.shape[1])
+                print(f"[DEBUG] Invalid tgt_ids detected: {tgt_ids}")
             # Compute the classification cost. Contrary to the loss, we don't use the NLL,
             # but approximate it in 1 - proba[target class].
             # The 1 is a constant that doesn't change the matching, it can be ommitted.
             filter_ignore = tgt_ids == 253
             tgt_ids[filter_ignore] = 0
+            print("tgt_ids", tgt_ids)
+            print("out_prob", out_prob)
+            print("out_prob shape", out_prob.shape)
+            print("tgt_ids shape", tgt_ids.shape)
             cost_class = -out_prob[:, tgt_ids]
             cost_class[
                 :, filter_ignore
