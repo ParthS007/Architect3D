@@ -364,10 +364,6 @@ class SemanticSegmentationDataset(Dataset):
             points[:, 10:12],
         )
 
-        # Set the class label of all valid instances to 0
-        labels[labels[:,0]!=-1,0] = 0
-        labels[labels[:,0]!=0,0] = 1
-
         raw_coordinates = coordinates.copy()
         raw_color = color
         raw_normals = normals
@@ -630,21 +626,33 @@ class SemanticSegmentationDataset(Dataset):
             raise ValueError(msg)
 
     def _remap_from_zero(self, labels):
+        print("#################### Before remapping from zero ####################")
+        print(labels)
+        print("##################### label info.keys()", list(self.label_info.keys()), "#################")
+        print("####### ignore label", self.ignore_label, "#########")
         labels[
             ~np.isin(labels, list(self.label_info.keys()))
         ] = self.ignore_label
         # remap to the range from 0
         for i, k in enumerate(self.label_info.keys()):
             labels[labels == k] = i
+        print("#################### After remapping from zero ####################")
+        print(labels)
         return labels
 
     def _remap_model_output(self, output):
-        #output = np.array(output)
-        #output_remapped = output.copy()
-        #for i, k in enumerate(self.label_info.keys()):
-        #    output_remapped[output == i] = k
-        #return output_remapped
-        return output
+        print("#################### Before remapping output ####################")
+        print(output)
+        print("##################### label info.keys()", list(self.label_info.keys()), "#################")
+        print("####### ignore label", self.ignore_label, "#########")
+        output = np.array(output)
+        output_remapped = output.copy()
+        for i, k in enumerate(self.label_info.keys()):
+            output_remapped[output == i] = k
+        print("#################### After remapping output ####################")
+        print(output_remapped)
+        return output_remapped
+        #return output
 
     def augment_individual_instance(
         self, coordinates, color, normals, labels, oversampling=1.0

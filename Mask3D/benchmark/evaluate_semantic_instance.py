@@ -83,7 +83,7 @@ VALID_CLASS_IDS = np.array(
     [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36, 39]
 )
 CLASS_LABELS = SCANNETPP_CLASS_LABLES
-VALID_CLASS_IDS = np.arange(1, len(SCANNETPP_CLASS_LABLES) + 1)
+VALID_CLASS_IDS = np.arange(0, len(SCANNETPP_CLASS_LABLES))
 ID_TO_LABEL = {}
 LABEL_TO_ID = {}
 for i in range(len(VALID_CLASS_IDS)):
@@ -338,6 +338,7 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
     pred_info = make_pred_info(pred)
     try:
         gt_ids = util_3d.load_ids(gt_file)
+        print("#gt_ids", gt_ids)
     except Exception as e:
         util.print_error("unable to load " + gt_file + ": " + str(e))
 
@@ -345,6 +346,7 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
     gt_instances = util_3d.get_instances(
         gt_ids, VALID_CLASS_IDS, CLASS_LABELS, ID_TO_LABEL
     )
+    print("#gt_instances", gt_instances)
     # associate
     gt2pred = deepcopy(gt_instances)
     for label in gt2pred:
@@ -355,7 +357,7 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
         pred2gt[label] = []
     num_pred_instances = 0
     # mask of void labels in the groundtruth
-    #bool_void = np.logical_not(np.in1d(gt_ids // 1000, VALID_CLASS_IDS))
+    bool_void = np.logical_not(np.in1d(gt_ids // 1000, VALID_CLASS_IDS))
     # go thru all prediction masks
     for uuid in pred_info:
         label_id = int(pred_info[uuid]["label_id"])
@@ -379,7 +381,7 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
         pred_instance["vert_count"] = num
         pred_instance["confidence"] = conf
         pred_instance["void_intersection"] = np.count_nonzero(
-            pred_mask#np.logical_and(bool_void, pred_mask)
+            np.logical_and(bool_void, pred_mask)
         )
 
         # matched gt instances
@@ -399,7 +401,8 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
         pred_instance["matched_gt"] = matched_gt
         num_pred_instances += 1
         pred2gt[label_name].append(pred_instance)
-
+    print("num_pred_instances", num_pred_instances)
+    print("gt2pred", gt2pred)
     return gt2pred, pred2gt
 
 
@@ -475,7 +478,7 @@ def evaluate(
         opt["min_region_sizes"] = np.array([100])
 
         CLASS_LABELS = SCANNETPP_CLASS_LABLES
-        VALID_CLASS_IDS = np.arange(1, len(SCANNETPP_CLASS_LABLES) + 1)
+        VALID_CLASS_IDS = np.arange(0, len(SCANNETPP_CLASS_LABLES))
         ID_TO_LABEL = {}
         LABEL_TO_ID = {}
         for i in range(len(VALID_CLASS_IDS)):
