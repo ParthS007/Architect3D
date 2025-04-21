@@ -7,7 +7,7 @@ train_dataset:
   volume_augmentations_path: conf/augmentation/volumentations_aug.yaml
   label_db_filepath: /work/scratch/dbagci/processed/scannetpp/label_database.yaml
   color_mean_std: /work/scratch/dbagci/processed/scannetpp/color_mean_std.yaml
-  data_percent: 0.025
+  data_percent: 0.01
   mode: ${data.train_mode}
   ignore_label: ${data.ignore_label}
   num_labels: ${data.num_labels}
@@ -39,7 +39,7 @@ validation_dataset:
   volume_augmentations_path: null
   label_db_filepath: /work/scratch/dbagci/processed/scannetpp/label_database.yaml
   color_mean_std: /work/scratch/dbagci/processed/scannetpp/color_mean_std.yaml
-  data_percent: 0.1
+  data_percent: 0.05
   mode: ${data.validation_mode}
   ignore_label: ${data.ignore_label}
   num_labels: ${data.num_labels}
@@ -61,7 +61,7 @@ test_dataset:
   volume_augmentations_path: null
   label_db_filepath: /work/scratch/dbagci/processed/scannetpp/label_database.yaml
   color_mean_std: /work/scratch/dbagci/processed/scannetpp/color_mean_std.yaml
-  data_percent: 0.1
+  data_percent: 0.05
   mode: ${data.test_mode}
   ignore_label: ${data.ignore_label}
   num_labels: ${data.num_labels}

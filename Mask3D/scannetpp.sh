@@ -28,7 +28,7 @@ data/datasets=scannetpp \
 general.eval_on_segments=true \
 general.train_on_segments=true \
 data.train_mode=train \
-general.num_targets=2754
+general.num_targets=2754 \
 general.checkpoint="/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt" \
 
 

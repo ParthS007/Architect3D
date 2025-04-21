@@ -59,6 +59,7 @@ import benchmark.util_3d as util_3d
 
 
 # ---------- Label info ---------- #
+"""
 CLASS_LABELS = [
     "cabinet",
     "bed",
@@ -79,9 +80,10 @@ CLASS_LABELS = [
     "bathtub",
     "otherfurniture",
 ]
-VALID_CLASS_IDS = np.array(
-    [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36, 39]
-)
+#VALID_CLASS_IDS = np.array(
+#    [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36, 39]
+#)
+"""
 CLASS_LABELS = SCANNETPP_CLASS_LABLES
 VALID_CLASS_IDS = np.arange(0, len(SCANNETPP_CLASS_LABLES))
 ID_TO_LABEL = {}
@@ -338,15 +340,20 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
     pred_info = make_pred_info(pred)
     try:
         gt_ids = util_3d.load_ids(gt_file)
-        print("#gt_ids", gt_ids)
+        #print("#gt_ids", gt_ids)
     except Exception as e:
         util.print_error("unable to load " + gt_file + ": " + str(e))
+
+    #print("########labels returned from assign_instances_for_scan START########")
+    #print(gt_ids)
+    #print("max", gt_ids.max(), "min", gt_ids.min())
+    #print("########labels returned from assign_instances_for_scan END########")
 
     # get gt instances
     gt_instances = util_3d.get_instances(
         gt_ids, VALID_CLASS_IDS, CLASS_LABELS, ID_TO_LABEL
     )
-    print("#gt_instances", gt_instances)
+    #print("#gt_instances", gt_instances)
     # associate
     gt2pred = deepcopy(gt_instances)
     for label in gt2pred:
@@ -401,8 +408,8 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
         pred_instance["matched_gt"] = matched_gt
         num_pred_instances += 1
         pred2gt[label_name].append(pred_instance)
-    print("num_pred_instances", num_pred_instances)
-    print("gt2pred", gt2pred)
+    #print("num_pred_instances", num_pred_instances)
+    #print("gt2pred", gt2pred)
     return gt2pred, pred2gt
 
 

@@ -31,7 +31,7 @@ class SemanticSegmentationDataset(Dataset):
         data_dir: Optional[Union[str, Tuple[str]]] = "/work/scratch/dbagci/processed/scannetpp",
         label_db_filepath: Optional[
             str
-        ] = "configs/scannet_preprocessing/label_database.yaml",
+        ] = "/work/scratch/dbagci/processed/scannetpp/label_database.yaml",
         # mean std values from scannet
         color_mean_std: Optional[Union[str, Tuple[Tuple[float]]]] = (
             (0.47793125906962, 0.4303257521323044, 0.3749598901421883),
@@ -364,6 +364,10 @@ class SemanticSegmentationDataset(Dataset):
             points[:, 10:12],
         )
 
+        # Set the class label of all valid instances to 0
+        labels[labels[:,0]!=-1,0] = 0
+        labels[labels[:,0]!=0,0] = 1
+
         raw_coordinates = coordinates.copy()
         raw_color = color
         raw_normals = normals
@@ -568,7 +572,10 @@ class SemanticSegmentationDataset(Dataset):
             else:
                 features = np.hstack((features, coordinates))
 
-
+        #print("########labels returned from dataloader START########")
+        #print(labels)
+        #print("max", labels.max(), "min", labels.min())
+        #print("########labels returned from dataloader END########")
 
         return (
             coordinates,
@@ -626,31 +633,35 @@ class SemanticSegmentationDataset(Dataset):
             raise ValueError(msg)
 
     def _remap_from_zero(self, labels):
-        print("#################### Before remapping from zero ####################")
-        print(labels)
-        print("##################### label info.keys()", list(self.label_info.keys()), "#################")
-        print("####### ignore label", self.ignore_label, "#########")
+        #print("#################### Before remapping from zero ####################")
+        #print(labels)
+        #print("##################### label info.keys()", list(self.label_info.keys()), "#################")
+        #print("####### ignore label", self.ignore_label, "#########")
         labels[
             ~np.isin(labels, list(self.label_info.keys()))
         ] = self.ignore_label
         # remap to the range from 0
         for i, k in enumerate(self.label_info.keys()):
             labels[labels == k] = i
-        print("#################### After remapping from zero ####################")
-        print(labels)
+        #print("#################### After remapping from zero ####################")
+        #print(labels)
+        print("########labels returned from remap_from_zero START########")
+        #print(labels)
+        print("max", labels.max(), "min", labels.min())
+        print("########labels returned from remap_from_zero END########")
         return labels
 
     def _remap_model_output(self, output):
-        print("#################### Before remapping output ####################")
-        print(output)
-        print("##################### label info.keys()", list(self.label_info.keys()), "#################")
-        print("####### ignore label", self.ignore_label, "#########")
+        #print("#################### Before remapping output ####################")
+        #print(output)
+        #print("##################### label info.keys()", list(self.label_info.keys()), "#################")
+        #print("####### ignore label", self.ignore_label, "#########")
         output = np.array(output)
         output_remapped = output.copy()
         for i, k in enumerate(self.label_info.keys()):
             output_remapped[output == i] = k
-        print("#################### After remapping output ####################")
-        print(output_remapped)
+        #print("#################### After remapping output ####################")
+        #print(output_remapped)
         return output_remapped
         #return output
 

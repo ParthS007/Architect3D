@@ -73,8 +73,8 @@ class ScannetPreprocessing(BasePreprocessing):
             filebase: info about file
         """
         scene = filepath.parent.name
-        print(f"############################")
-        print(f"Processing scene {scene} and in filepath {filepath}...")
+        #print(f"############################")
+        #print(f"Processing scene {scene} and in filepath {filepath}...")
         filebase = {
             "filepath": filepath,
             "scene": scene,

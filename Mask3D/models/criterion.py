@@ -151,20 +151,24 @@ class SetCriterion(nn.Module):
         target_classes_o = torch.cat(
             [t["labels"][J] for t, (_, J) in zip(targets, indices)]
         )
+        #print("########labels returned from loss START########")
+        #print(target_classes_o)
+        #print("max", target_classes_o.max(), "min", target_classes_o.min())
+        #print("########labels returned from loss END########")
         target_classes = torch.full(
             src_logits.shape[:2],
             self.num_classes,
             dtype=torch.int64,
             device=src_logits.device,
         )
-        print(f"Target classes range: {target_classes_o.min()} to {target_classes_o.max()}, num classes {self.num_classes}")
-        num_classes_in_model = src_logits.shape[2]
-        print(f"Min target class: {target_classes_o.min()}, Max target class: {target_classes_o.max()}")
-        print(f"Number of classes in model: {num_classes_in_model}")
+        #print(f"Target classes range: {target_classes_o.min()} to {target_classes_o.max()}, num classes {self.num_classes}")
+        #num_classes_in_model = src_logits.shape[2]
+        #print(f"Min target class: {target_classes_o.min()}, Max target class: {target_classes_o.max()}")
+        #print(f"Number of classes in model: {num_classes_in_model}")
         target_classes[idx] = target_classes_o
-        print(
-            f"[DEBUG] target_classes shape: {target_classes.shape}, ",
-            f"src_logits shape: {src_logits.shape}",)
+        #print(
+        #    f"[DEBUG] target_classes shape: {target_classes.shape}, ",
+        #    f"src_logits shape: {src_logits.shape}",)
         loss_ce = F.cross_entropy(
             src_logits.transpose(1, 2),
             target_classes,
@@ -197,11 +201,11 @@ class SetCriterion(nn.Module):
                     target_mask.shape[1], device=target_mask.device
                 )
 
-            print(
-                f"[DEBUG] Batch {batch_id}: target_mask shape: {target_mask.shape}, "
-                f"map shape: {map.shape}"
-            )
-            print(f"[DEBUG] Batch {batch_id}: map indices {map_id} - target indices {target_id}")
+            #print(
+            #    f"[DEBUG] Batch {batch_id}: target_mask shape: {target_mask.shape}, "
+            #    f"map shape: {map.shape}"
+            #)
+            #print(f"[DEBUG] Batch {batch_id}: map indices {map_id} - target indices {target_id}")
 
             num_masks = target_mask.shape[0]
             map = map[:, point_idx]
@@ -298,9 +302,9 @@ class SetCriterion(nn.Module):
         }
 
         # Retrieve the matching between the outputs of the last layer and the targets
-        print(
-            f"[DEBUG] outputs_without_aux: {outputs_without_aux}, targets: {targets}",
-        )
+        #print(
+        #    f"[DEBUG] outputs_without_aux: {outputs_without_aux}, targets: {targets}",
+        #)
         indices = self.matcher(outputs_without_aux, targets, mask_type)
 
         # Compute the average number of target boxes accross all nodes, for normalization purposes

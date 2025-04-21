@@ -828,8 +828,8 @@ class InstanceSegmentation(pl.LightningModule):
                 target_full_res[bid]["labels"][
                     target_full_res[bid]["labels"] == 0
                 ] = -1
-        print("all_pred_classes[bid]", all_pred_classes[bid])
-        print("len(prediction[self.decoder_id][pred_masks])", len(prediction[self.decoder_id]["pred_masks"]))
+        #print("all_pred_classes[bid]", all_pred_classes[bid])
+        #print("len(prediction[self.decoder_id][pred_masks])", len(prediction[self.decoder_id]["pred_masks"]))
         for bid in range(len(prediction[self.decoder_id]["pred_masks"])):
             all_pred_classes[
                 bid
@@ -847,7 +847,7 @@ class InstanceSegmentation(pl.LightningModule):
                     target_full_res[bid]["labels"].cpu() + label_offset
                 )
                 
-            print("Stored predictions for key:", file_names)
+            #print("Stored predictions for key:", file_names)
             if self.config.general.eval_inner_core == -1:
                 self.preds[file_names[bid]] = {
                     "pred_masks": all_pred_masks[bid],
@@ -864,7 +864,7 @@ class InstanceSegmentation(pl.LightningModule):
                     "pred_classes": all_pred_classes[bid],
                 }
 
-                print("Stored predictions for key:", file_names[bid])
+                #print("Stored predictions for key:", file_names[bid])
             if self.config.general.save_visualizations:
                 if "cond_inner" in self.test_dataset.data[idx[bid]]:
                     target_full_res[bid]["masks"] = target_full_res[bid][
@@ -943,7 +943,7 @@ class InstanceSegmentation(pl.LightningModule):
                         self.decoder_id,
                     )
         
-        print("Current scan keys in self.preds:", list(self.preds.keys()))
+        #print("Current scan keys in self.preds:", list(self.preds.keys()))
 
     def eval_instance_epoch_end(self):
         log_prefix = f"val"
