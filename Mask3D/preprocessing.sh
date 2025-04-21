@@ -10,4 +10,4 @@
 #SBATCH --gpus=8
 
 
-srun python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/courses/3dv/20/processed/scannetpp"
+srun python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/scratch/dbagci/processed/scannetpp"
