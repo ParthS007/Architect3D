@@ -355,7 +355,7 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
         pred2gt[label] = []
     num_pred_instances = 0
     # mask of void labels in the groundtruth
-    #bool_void = np.logical_not(np.in1d(gt_ids // 1000, VALID_CLASS_IDS))
+    bool_void = np.logical_not(np.in1d(gt_ids // 1000, VALID_CLASS_IDS))
     # go thru all prediction masks
     for uuid in pred_info:
         label_id = int(pred_info[uuid]["label_id"])
@@ -379,7 +379,7 @@ def assign_instances_for_scan(pred: dict, gt_file: str):
         pred_instance["vert_count"] = num
         pred_instance["confidence"] = conf
         pred_instance["void_intersection"] = np.count_nonzero(
-            pred_mask#np.logical_and(bool_void, pred_mask)
+            np.logical_and(bool_void, pred_mask)
         )
 
         # matched gt instances

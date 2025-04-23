@@ -27,7 +27,7 @@ test_batch_size: 1
 cache_data: false
 
 # collation
-voxel_size: 0.05
+voxel_size: 0.1
 
 reps_per_epoch: ${general.reps_per_epoch}
 

@@ -116,13 +116,13 @@ if __name__ == "__main__":
         #if key in ["model.backbone.final.kernel", "model.backbone.final.bias", "model.class_embed_head.weight", "model.class_embed_head.bias"]:
         #    del state_dict[key]
         if key == "model.backbone.final.kernel":
-            state_dict[key] = torch.zeros(96, 2754)
+            state_dict[key] = torch.rand(96, 2754)
         elif key == "model.backbone.final.bias":
-            state_dict[key] = torch.zeros(1, 2754)
+            state_dict[key] = torch.rand(1, 2754)
         elif key == "model.class_embed_head.weight":
-            state_dict[key] = torch.zeros(2754, 128)
+            state_dict[key] = torch.rand(2754, 128)
         elif key == "model.class_embed_head.bias":
-            state_dict[key] = torch.zeros(2754)
+            state_dict[key] = torch.rand(2754)
         else:
             pass
     #state_dict["criterion.empty_weight"] = torch.zeros(2753)

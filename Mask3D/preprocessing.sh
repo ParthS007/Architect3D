@@ -10,4 +10,6 @@
 #SBATCH --gpus=8
 
 
-srun python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/scratch/dbagci/processed/scannetpp"
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate mask3d_clean
+python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/scratch/habaumann/3dv/processed/scannetpp"
