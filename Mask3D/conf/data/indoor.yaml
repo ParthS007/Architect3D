@@ -9,7 +9,7 @@ validation_mode: validation
 test_mode: validation # test  # validation
 
 # dataset
-ignore_label: 255
+ignore_label: 0
 add_raw_coordinates: true # 3dim
 add_colors: true # 3dim
 add_normals: false # 3dim

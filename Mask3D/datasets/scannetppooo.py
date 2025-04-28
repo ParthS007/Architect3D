@@ -6,8 +6,6 @@ from typing import List, Optional, Tuple, Union
 from random import choice
 from copy import deepcopy
 from random import randrange
-
-
 import numpy
 import torch
 from datasets.random_cuboid import RandomCuboid
@@ -20,10 +18,6 @@ import yaml
 
 from yaml import CLoader as Loader
 from torch.utils.data import Dataset
-from datasets.scannet200.scannet200_constants import (
-    SCANNET_COLOR_MAP_200,
-    SCANNET_COLOR_MAP_20,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +27,8 @@ class SemanticSegmentationDataset(Dataset):
 
     def __init__(
         self,
-        dataset_name="scannet",
-        data_dir: Optional[Union[str, Tuple[str]]] = "/work/scratch/dbagci/processed/scannetpp",
+        dataset_name="scannetpp",
+        data_dir: Optional[Union[str, Tuple[str]]] = "/work/courses/3dv/20/scannetpp",
         label_db_filepath: Optional[
             str
         ] = "/work/scratch/dbagci/processed/scannetpp/label_database.yaml",
@@ -50,7 +44,7 @@ class SemanticSegmentationDataset(Dataset):
         add_instance: Optional[bool] = False,
         num_labels: Optional[int] = -1,
         data_percent: Optional[float] = 1.0,
-        ignore_label: Optional[Union[int, Tuple[int]]] = 255,
+        ignore_label: Optional[Union[int, Tuple[int]]] = -1,
         volume_augmentations_path: Optional[str] = None,
         image_augmentations_path: Optional[str] = None,
         instance_oversampling=0,
@@ -88,61 +82,6 @@ class SemanticSegmentationDataset(Dataset):
         self.dataset_name = dataset_name
         self.is_elastic_distortion = is_elastic_distortion
         self.color_drop = color_drop
-
-        if self.dataset_name == "scannet":
-            self.color_map = SCANNET_COLOR_MAP_20
-            self.color_map[255] = (255, 255, 255)
-        elif self.dataset_name == "stpls3d":
-            self.color_map = {
-                0: [0, 255, 0],  # Ground
-                1: [0, 0, 255],  # Build
-                2: [0, 255, 255],  # LowVeg
-                3: [255, 255, 0],  # MediumVeg
-                4: [255, 0, 255],  # HiVeg
-                5: [100, 100, 255],  # Vehicle
-                6: [200, 200, 100],  # Truck
-                7: [170, 120, 200],  # Aircraft
-                8: [255, 0, 0],  # MilitaryVec
-                9: [200, 100, 100],  # Bike
-                10: [10, 200, 100],  # Motorcycle
-                11: [200, 200, 200],  # LightPole
-                12: [50, 50, 50],  # StreetSign
-                13: [60, 130, 60],  # Clutter
-                14: [130, 30, 60],
-            }  # Fence
-        elif self.dataset_name == "scannet200":
-            self.color_map = SCANNET_COLOR_MAP_200
-        elif self.dataset_name == "s3dis":
-            self.color_map = {
-                0: [0, 255, 0],  # ceiling
-                1: [0, 0, 255],  # floor
-                2: [0, 255, 255],  # wall
-                3: [255, 255, 0],  # beam
-                4: [255, 0, 255],  # column
-                5: [100, 100, 255],  # window
-                6: [200, 200, 100],  # door
-                7: [170, 120, 200],  # table
-                8: [255, 0, 0],  # chair
-                9: [200, 100, 100],  # sofa
-                10: [10, 200, 100],  # bookcase
-                11: [200, 200, 200],  # board
-                12: [50, 50, 50],  # clutter
-            }
-        elif self.dataset_name == "scannetpp":
-            with open("/work/scratch/dbagci/processed/scannetpp/label_database.yaml", "r") as stream:
-                data = yaml.safe_load(stream)
-
-            self.color_map = {}
-            for key, info in data.items():
-                try:
-                    id_val = int(key)
-                except ValueError:
-                    id_val = key
-                self.color_map[id_val] = info["color"]
-
-            self.color_map[0] = [255, 255, 255]
-        else:
-            assert False, "dataset not known"
 
         self.task = task
 
@@ -192,43 +131,32 @@ class SemanticSegmentationDataset(Dataset):
         self.noise_rate = noise_rate
         self.resample_points = resample_points
 
+        self._unique_labels_set = set()
+
         # loading database files
         self._data = []
         for database_path in self.data_dir:
             database_path = Path(database_path)
-            if self.dataset_name != "s3dis":
-                if not (database_path / f"{mode}_database.yaml").exists():
-                    print(
-                        f"generate {database_path}/{mode}_database.yaml first"
-                    )
-                    exit()
-                self._data.extend(
-                    self._load_yaml(database_path / f"{mode}_database.yaml")
+            if not (database_path / f"{mode}_database.yaml").exists():
+                print(
+                    f"generate {database_path}/{mode}_database.yaml first"
                 )
-            else:
-                mode_s3dis = f"Area_{self.area}"
-                if self.mode == "train":
-                    mode_s3dis = "train_" + mode_s3dis
-                if not (
-                    database_path / f"{mode_s3dis}_database.yaml"
-                ).exists():
-                    print(
-                        f"generate {database_path}/{mode_s3dis}_database.yaml first"
-                    )
-                    exit()
-                self._data.extend(
-                    self._load_yaml(
-                        database_path / f"{mode_s3dis}_database.yaml"
-                    )
-                )
+                exit()
+            self._data.extend(
+                self._load_yaml(database_path / f"{mode}_database.yaml")
+            )
         if data_percent < 1.0:
             self._data = sample(
                 self._data, int(len(self._data) * data_percent)
             )
         labels = self._load_yaml(Path(label_db_filepath))
-        
-        # if working only on classes for validation - discard others
-        self._labels = labels #self._select_correct_labels(labels, num_labels)
+        self._labels = labels #self._select_correct_labels(labels, num_labels) #{0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
+
+        if self.dataset_name == "scannetpp":
+            self.color_map = {int(k): v["color"] for k, v in self._labels.items()}
+            #self.color_map = {0: [0, 255, 0], **{i: np.random.randint(0, 256, 3).tolist() for i in range(1,  2754)}}
+        else:
+            assert False, "dataset not known"
 
         if instance_oversampling > 0:
             self.instance_data = self._load_yaml(
@@ -236,10 +164,6 @@ class SemanticSegmentationDataset(Dataset):
             )
 
         # normalize color channels
-        if self.dataset_name == "s3dis":
-            color_mean_std = color_mean_std.replace(
-                "color_mean_std.yaml", f"Area_{self.area}_color_mean_std.yaml"
-            )
 
         if Path(str(color_mean_std)).exists():
             color_mean_std = self._load_yaml(color_mean_std)
@@ -257,9 +181,9 @@ class SemanticSegmentationDataset(Dataset):
             color_mean = (0.47793125906962, 0.4303257521323044, 0.3749598901421883)
             color_std = (0.2834475483823543, 0.27566157565723015, 0.27018971370874995)
 
-            logger.error(
-                "pass mean and std as tuple of tuples, or as an .yaml file"
-            )
+            #logger.error(
+            #    "pass mean and std as tuple of tuples, or as an .yaml file"
+            #)
 
         # augmentations
         self.volume_augmentations = V.NoOp()
@@ -278,6 +202,9 @@ class SemanticSegmentationDataset(Dataset):
             )
         # mandatory color augmentation
         if add_colors:
+            # use imagenet stats
+            color_mean = (0.485, 0.456, 0.406)
+            color_std = (0.229, 0.224, 0.225)
             self.normalize_color = A.Normalize(mean=color_mean, std=color_std)
 
         self.cache_data = cache_data
@@ -350,6 +277,7 @@ class SemanticSegmentationDataset(Dataset):
                 self._data = new_data
                 # new_data.append(np.load(self.data[i]["filepath"].replace("../../", "")))
             # self._data = new_data
+        #print(f"############## Loaded {len(self._data)} scans from {self.data_dir}")        
 
     def splitPointCloud(self, cloud, size=50.0, stride=50, inner_core=-1):
         if inner_core == -1:
@@ -429,10 +357,6 @@ class SemanticSegmentationDataset(Dataset):
             assert not self.on_crops, "you need caching if on crops"
             points = np.load(self.data[idx]["filepath"].replace("../../", ""))
 
-        if "train" in self.mode and self.dataset_name in ["s3dis", "stpls3d"]:
-            inds = self.random_cuboid(points)
-            points = points[inds]
-
         coordinates, color, normals, segments, labels = (
             points[:, :3],
             points[:, 3:6],
@@ -440,6 +364,10 @@ class SemanticSegmentationDataset(Dataset):
             points[:, 9],
             points[:, 10:12],
         )
+
+        # Set the class label of all valid instances to 0
+        #labels[labels[:,0]!=-1,0] = 0
+        #labels[labels[:,0]!=0,0] = 1
 
         raw_coordinates = coordinates.copy()
         raw_color = color
@@ -456,7 +384,6 @@ class SemanticSegmentationDataset(Dataset):
                     labels[:, 1],
                     self._remap_from_zero(labels[:, 0].copy()),
                 )
-
                 coordinates = coordinates[new_idx]
                 color = color[new_idx]
                 labels = labels[new_idx]
@@ -467,7 +394,6 @@ class SemanticSegmentationDataset(Dataset):
                 points = points[new_idx]
 
             coordinates -= coordinates.mean(0)
-
             try:
                 coordinates += (
                     np.random.uniform(coordinates.min(0), coordinates.max(0))
@@ -642,7 +568,7 @@ class SemanticSegmentationDataset(Dataset):
             if not self.add_instance:
                 # taking only first column, which is segmentation label, not instance
                 labels = labels[:, 0].flatten()[..., None]
-
+                
         labels = np.hstack((labels, segments[..., None].astype(np.int32)))
 
         features = color
@@ -654,50 +580,30 @@ class SemanticSegmentationDataset(Dataset):
             else:
                 features = np.hstack((features, coordinates))
 
-        # if self.task != "semantic_segmentation":
-        if self.data[idx]["raw_filepath"].split("/")[-2] in [
-            "scene0636_00",
-            "scene0154_00",
-        ]:
-            return self.__getitem__(0)
+        #print("########labels returned from dataloader START########")
+        #print(labels)
+        #print("max", labels.max(), "min", labels.min())
+        #print("########labels returned from dataloader END########")
+        #self._unique_labels_set.update(np.unique(labels).tolist())
+        #print("#### unique labels len", len(self._unique_labels_set))
+        #print(self._unique_labels_set)
 
-        if self.dataset_name == "s3dis":
-            return (
-                coordinates,
-                features,
-                labels,
-                self.data[idx]["area"] + "_" + self.data[idx]["scene"],
-                raw_color,
-                raw_normals,
-                raw_coordinates,
-                idx,
-            )
-        if self.dataset_name == "stpls3d":
-            if labels.shape[1] != 1:  # only segments --> test set!
-                if np.unique(labels[:, -2]).shape[0] < 2:
-                    print("NO INSTANCES")
-                    return self.__getitem__(0)
-            return (
-                coordinates,
-                features,
-                labels,
-                self.data[idx]["scene"],
-                raw_color,
-                raw_normals,
-                raw_coordinates,
-                idx,
-            )
-        else:
-            return (
-                coordinates,
-                features,
-                labels,
-                self.data[idx]["raw_filepath"].split("/")[-2],
-                raw_color,
-                raw_normals,
-                raw_coordinates,
-                idx,
-            )
+        return (
+            coordinates,
+            features,
+            labels,
+            self.data[idx]["raw_filepath"].split("/")[-2],
+            raw_color,
+            raw_normals,
+            raw_coordinates,
+            idx,
+        )
+    
+    @property
+    def unique_labels(self):
+        """Property that returns all unique labels seen so far as a sorted list."""
+        return sorted(self._unique_labels_set)
+
 
     @property
     def data(self):
@@ -711,7 +617,7 @@ class SemanticSegmentationDataset(Dataset):
 
     @staticmethod
     def _load_yaml(filepath):
-        with open(filepath) as f:
+        with open(filepath, encoding="utf-8") as f:
             file = yaml.load(f, Loader=Loader)
             #file = yaml.load(f)
         return file
@@ -744,28 +650,37 @@ class SemanticSegmentationDataset(Dataset):
             raise ValueError(msg)
 
     def _remap_from_zero(self, labels):
-        print("[DEBUG] REMAP FROM ZERO BEFORE")
-        print(labels)
+        #print("#################### Before remapping from zero ####################")
+        #print(labels)
+        #print("##################### label info.keys()", list(self.label_info.keys()), "#################")
+        #print("####### ignore label", self.ignore_label, "#########")
         labels[
             ~np.isin(labels, list(self.label_info.keys()))
         ] = self.ignore_label
         # remap to the range from 0
         for i, k in enumerate(self.label_info.keys()):
             labels[labels == k] = i
-        print("[DEBUG] REMAP FROM ZERO AFTER")
-        print(labels)
+        #print("#################### After remapping from zero ####################")
+        #print(labels)
+        print("########labels returned from remap_from_zero START########")
+        #print(labels)
+        print("max", labels.max(), "min", labels.min())
+        print("########labels returned from remap_from_zero END########")
         return labels
 
     def _remap_model_output(self, output):
-        print("[DEBUG] REMAP MODEL OUTPUT BEFORE")
-        print(output)
+        #print("#################### Before remapping output ####################")
+        #print(output)
+        #print("##################### label info.keys()", list(self.label_info.keys()), "#################")
+        #print("####### ignore label", self.ignore_label, "#########")
         output = np.array(output)
         output_remapped = output.copy()
         for i, k in enumerate(self.label_info.keys()):
             output_remapped[output == i] = k
-        print("[DEBUG] REMAP MODEL OUTPUT AFTER")
-        print(output_remapped)
+        #print("#################### After remapping output ####################")
+        #print(output_remapped)
         return output_remapped
+        #return output
 
     def augment_individual_instance(
         self, coordinates, color, normals, labels, oversampling=1.0

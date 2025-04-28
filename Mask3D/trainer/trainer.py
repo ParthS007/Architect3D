@@ -584,12 +584,23 @@ class InstanceSegmentation(pl.LightningModule):
     ):
         if device is None:
             device = self.device
+
+        # Debug prints: inspect logits
+        print("[DEBUG] mask_cls shape:", mask_cls.shape)
+        print("[DEBUG] mask_pred shape:", mask_pred.shape)
+        unique_logits = torch.unique(mask_cls)
+        print("[DEBUG] Unique mask_cls logits:", unique_logits.cpu().numpy())
+
+
         labels = (
             torch.arange(num_classes, device=device)
             .unsqueeze(0)
             .repeat(num_queries, 1)
             .flatten(0, 1)
         )
+
+        # Debug print on labels
+        print("[DEBUG] Generated labels shape:", labels.shape)
 
         if self.config.general.topk_per_image != -1:
             scores_per_query, topk_indices = mask_cls.flatten(0, 1).topk(
@@ -600,7 +611,12 @@ class InstanceSegmentation(pl.LightningModule):
                 num_queries, sorted=True
             )
 
+        print("[DEBUG] scores_per_query:", scores_per_query.cpu().numpy())
+        print("[DEBUG] topk_indices:", topk_indices.cpu().numpy())
+
         labels_per_query = labels[topk_indices]
+        # Debug print on label assignments
+        print("[DEBUG] labels_per_query:", labels_per_query.cpu().numpy())
         topk_indices = topk_indices // num_classes
         mask_pred = mask_pred[:, topk_indices]
 
@@ -613,6 +629,8 @@ class InstanceSegmentation(pl.LightningModule):
         score = scores_per_query * mask_scores_per_image
         classes = labels_per_query
 
+        print("[DEBUG] Final scores:", score.cpu().numpy())
+        print("[DEBUG] Final classes unique:", torch.unique(classes).cpu().numpy())
         return score, result_pred_mask, classes, heatmap
 
     def eval_instance_step(
@@ -732,8 +750,8 @@ class InstanceSegmentation(pl.LightningModule):
                         self.model.num_classes - 1,
                     )
 
-                scores = torch.ones(masks.shape[1])
-                classes = torch.zeros(masks.shape[1])
+                #scores = torch.ones(masks.shape[1])
+                #classes = torch.zeros(masks.shape[1])
 
                 masks = self.get_full_res_mask(
                     masks,
@@ -831,11 +849,17 @@ class InstanceSegmentation(pl.LightningModule):
         #print("all_pred_classes[bid]", all_pred_classes[bid])
         #print("len(prediction[self.decoder_id][pred_masks])", len(prediction[self.decoder_id]["pred_masks"]))
         for bid in range(len(prediction[self.decoder_id]["pred_masks"])):
+            print(f"[DEBUG] Batch {bid} - unique predicted classes after remapping:",
+                  np.unique(all_pred_classes[bid].cpu().numpy()))
+            
             all_pred_classes[
                 bid
             ] = self.validation_dataset._remap_model_output(
                 all_pred_classes[bid].cpu() + label_offset
             )
+
+            print(f"[DEBUG] Batch {bid} - unique predicted classes after remapping:",
+                  np.unique(all_pred_classes[bid]))
 
             if (
                 self.config.data.test_mode != "test"

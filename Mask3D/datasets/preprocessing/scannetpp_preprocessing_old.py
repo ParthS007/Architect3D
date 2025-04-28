@@ -10,22 +10,17 @@ import random
 from datasets.preprocessing.base_preprocessing import BasePreprocessing
 from utils.point_cloud_utils import load_ply_with_normals
 
-from datasets.scannet200.scannet200_constants import (
-    VALID_CLASS_IDS_200,
-    SCANNET_COLOR_MAP_200,
-    CLASS_LABELS_200,
-)
 
+
+#python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/courses/3dv/20/processed/scannetpp"
 
 class ScannetPreprocessing(BasePreprocessing):
     def __init__(
         self,
         data_dir: str = "/work/courses/3dv/20/scannetpp",
-        save_dir: str = "./work/scratch/dbagci/processed/scannetpp",
+        save_dir: str = "/work/scratch/dbagci/processed/scannetpp",
         modes: tuple = ("train", "validation"),
-        n_jobs: int = -1,
-        git_repo: str = "./data/raw/scannet/ScanNet",
-        scannet200: bool = False,
+        n_jobs: int = 8,
     ):
         super().__init__(data_dir, save_dir, modes, n_jobs)
 
@@ -79,8 +74,9 @@ class ScannetPreprocessing(BasePreprocessing):
         Returns:
             filebase: info about file
         """
-        #scene, sub_scene = self._parse_scene_subscene(filepath.name)
         scene = filepath.parent.name
+        #print(f"############################")
+        #print(f"Processing scene {scene} and in filepath {filepath}...")
         filebase = {
             "filepath": filepath,
             "scene": scene,
@@ -97,7 +93,7 @@ class ScannetPreprocessing(BasePreprocessing):
             # getting scene information
             #description_filepath = Path(
             #    filepath
-            #).parent / filepath.name.replace("_vh_clean_2.ply", ".txt")
+            #).parent / filepath.name.replace("mesh_aligned_0.ply", ".txt")
             #with open(description_filepath) as f:
             #    scene_type = f.read().split("\n")[:-1]
             #scene_type = scene_type[-1].split(" = ")[1]
@@ -159,8 +155,8 @@ class ScannetPreprocessing(BasePreprocessing):
                 #print(labels[occupied_indices, 0])
             points = np.hstack((points, labels))
 
-            # gt_data = (points[:, -2] + 1) * 1000 + points[:, -1] + 1
-            gt_data = points[:, -2] * 1000 + points[:, -1] + 1
+            gt_data = (points[:, -2] + 1) * 1000 + points[:, -1] + 1
+
 
         processed_filepath = (
             self.save_dir / mode / f"{scene}.npy"
@@ -169,9 +165,6 @@ class ScannetPreprocessing(BasePreprocessing):
             processed_filepath.parent.mkdir(parents=True, exist_ok=True)
         np.save(processed_filepath, points.astype(np.float32))
         filebase["filepath"] = str(processed_filepath)
-
-        if mode == "test":
-            return filebase
 
         processed_gt_filepath = (
             self.save_dir
@@ -213,26 +206,6 @@ class ScannetPreprocessing(BasePreprocessing):
             "std": [float(each) for each in color_std],
         }
         self._save_yaml(self.save_dir / "color_mean_std.yaml", feats_mean_std)
-
-    @logger.catch
-    def fix_bugs_in_labels(self):
-        if not self.scannet200:
-            logger.add(self.save_dir / "fixed_bugs_in_labels.log")
-            found_wrong_labels = {
-                tuple([270, 0]): 50,
-                tuple([270, 2]): 50,
-                tuple([384, 0]): 149,
-            }
-            for scene, wrong_label in found_wrong_labels.items():
-                scene, sub_scene = scene
-                bug_file = (
-                    self.save_dir / "train" / f"{scene:04}_{sub_scene:02}.npy"
-                )
-                points = np.load(bug_file)
-                bug_mask = points[:, -1] != wrong_label
-                points = points[bug_mask]
-                np.save(bug_file, points)
-                logger.info(f"Fixed {bug_file}")
 
     def _parse_scene_subscene(self, name):
         scene_match = re.match(r"scene(\d{4})_(\d{2})", name)

@@ -10,15 +10,22 @@ import random
 from datasets.preprocessing.base_preprocessing import BasePreprocessing
 from utils.point_cloud_utils import load_ply_with_normals
 
-#python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/courses/3dv/20/processed/scannetpp"
+from datasets.scannet200.scannet200_constants import (
+    VALID_CLASS_IDS_200,
+    SCANNET_COLOR_MAP_200,
+    CLASS_LABELS_200,
+)
+
 
 class ScannetPreprocessing(BasePreprocessing):
     def __init__(
         self,
         data_dir: str = "/work/courses/3dv/20/scannetpp",
-        save_dir: str = "/work/scratch/dbagci/processed/scannetpp",
+        save_dir: str = "./work/scratch/dbagci/processed/scannetpp",
         modes: tuple = ("train", "validation"),
         n_jobs: int = 8,
+        git_repo: str = "./data/raw/scannet/ScanNet",
+        scannet200: bool = False,
     ):
         super().__init__(data_dir, save_dir, modes, n_jobs)
 
@@ -72,9 +79,8 @@ class ScannetPreprocessing(BasePreprocessing):
         Returns:
             filebase: info about file
         """
+        #scene, sub_scene = self._parse_scene_subscene(filepath.name)
         scene = filepath.parent.name
-        #print(f"############################")
-        #print(f"Processing scene {scene} and in filepath {filepath}...")
         filebase = {
             "filepath": filepath,
             "scene": scene,
@@ -88,6 +94,15 @@ class ScannetPreprocessing(BasePreprocessing):
         points = np.hstack((coords, features))
 
         if mode in ["train", "validation"]:
+            # getting scene information
+            #description_filepath = Path(
+            #    filepath
+            #).parent / filepath.name.replace("_vh_clean_2.ply", ".txt")
+            #with open(description_filepath) as f:
+            #    scene_type = f.read().split("\n")[:-1]
+            #scene_type = scene_type[-1].split(" = ")[1]
+            #filebase["scene_type"] = scene_type
+            #filebase["raw_description_filepath"] = description_filepath
 
             # getting instance info
             instance_info_filepath = next(
@@ -125,10 +140,27 @@ class ScannetPreprocessing(BasePreprocessing):
                 segments_occupied = np.array(instance["segments"])
                 occupied_indices = np.isin(segments, segments_occupied)
                 labels[occupied_indices, 1] = instance["id"]
+
+                label200 = instance["label"]
+                #print("label200")
+                #print(label200)
+                #print("labels[occupied_indices, 0] before")
+                #print(labels[occupied_indices, 0])
+                #print("self.labels_pd")
+                #print(self.labels_pd)
+                # Map the category name to id
+                try:
+                    label_id = self.labels_pd.index(label200) + 1
+                except ValueError:
+                    label_id = 0  
+                #label_id = self.labels_pd.index(label200)
+                labels[occupied_indices, 0] = label_id
+                #print("labels[occupied_indices, 0] after")
+                #print(labels[occupied_indices, 0])
             points = np.hstack((points, labels))
 
-            gt_data = (points[:, -2] + 1) * 1000 + points[:, -1] + 1
-
+            # gt_data = (points[:, -2] + 1) * 1000 + points[:, -1] + 1
+            gt_data = points[:, -2] * 1000 + points[:, -1] + 1
 
         processed_filepath = (
             self.save_dir / mode / f"{scene}.npy"
@@ -137,6 +169,9 @@ class ScannetPreprocessing(BasePreprocessing):
             processed_filepath.parent.mkdir(parents=True, exist_ok=True)
         np.save(processed_filepath, points.astype(np.float32))
         filebase["filepath"] = str(processed_filepath)
+
+        if mode == "test":
+            return filebase
 
         processed_gt_filepath = (
             self.save_dir
@@ -178,11 +213,6 @@ class ScannetPreprocessing(BasePreprocessing):
             "std": [float(each) for each in color_std],
         }
         self._save_yaml(self.save_dir / "color_mean_std.yaml", feats_mean_std)
-
-    def _parse_scene_subscene(self, name):
-        scene_match = re.match(r"scene(\d{4})_(\d{2})", name)
-        return int(scene_match.group(1)), int(scene_match.group(2))
-
 
 if __name__ == "__main__":
     Fire(ScannetPreprocessing)

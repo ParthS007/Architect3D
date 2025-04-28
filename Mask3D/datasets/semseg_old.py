@@ -6,6 +6,8 @@ from typing import List, Optional, Tuple, Union
 from random import choice
 from copy import deepcopy
 from random import randrange
+
+
 import numpy
 import torch
 from datasets.random_cuboid import RandomCuboid
@@ -16,8 +18,12 @@ import scipy
 import volumentations as V
 import yaml
 
-from yaml import CLoader as Loader
+# from yaml import CLoader as Loader
 from torch.utils.data import Dataset
+from datasets.scannet200.scannet200_constants import (
+    SCANNET_COLOR_MAP_200,
+    SCANNET_COLOR_MAP_20,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +33,11 @@ class SemanticSegmentationDataset(Dataset):
 
     def __init__(
         self,
-        dataset_name="scannetpp",
-        data_dir: Optional[Union[str, Tuple[str]]] = "/work/scratch/dbagci/processed/scannetpp",
+        dataset_name="scannet",
+        data_dir: Optional[Union[str, Tuple[str]]] = "data/processed/scannet",
         label_db_filepath: Optional[
             str
-        ] = "/work/scratch/dbagci/processed/scannetpp/label_database.yaml",
+        ] = "configs/scannet_preprocessing/label_database.yaml",
         # mean std values from scannet
         color_mean_std: Optional[Union[str, Tuple[Tuple[float]]]] = (
             (0.47793125906962, 0.4303257521323044, 0.3749598901421883),
@@ -82,6 +88,16 @@ class SemanticSegmentationDataset(Dataset):
         self.dataset_name = dataset_name
         self.is_elastic_distortion = is_elastic_distortion
         self.color_drop = color_drop
+
+        if self.dataset_name == "scannet":
+            self.color_map = SCANNET_COLOR_MAP_20
+            self.color_map[255] = (255, 255, 255)
+        elif self.dataset_name == "scannet200":
+            self.color_map = SCANNET_COLOR_MAP_200
+        elif self.dataset_name == "scannetpp":
+            self.color_map = {0: [0, 255, 0]}
+        else:
+            assert False, "dataset not known"
 
         self.task = task
 
@@ -147,15 +163,13 @@ class SemanticSegmentationDataset(Dataset):
             self._data = sample(
                 self._data, int(len(self._data) * data_percent)
             )
-
         labels = self._load_yaml(Path(label_db_filepath))
-        self._labels = labels #self._select_correct_labels(labels, num_labels) #{0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
 
+        # if working only on classes for validation - discard others
         if self.dataset_name == "scannetpp":
-            self.color_map = {int(k): v["color"] for k, v in self._labels.items()}
-            #self.color_map = {0: [0, 255, 0], **{i: np.random.randint(0, 256, 3).tolist() for i in range(1,  2754)}}
+            self._labels = {0: {'color': [0, 255, 0], 'name': 'object', 'validation': True}}
         else:
-            assert False, "dataset not known"
+            self._labels = self._select_correct_labels(labels, num_labels)
 
         if instance_oversampling > 0:
             self.instance_data = self._load_yaml(
@@ -173,16 +187,9 @@ class SemanticSegmentationDataset(Dataset):
         elif len(color_mean_std[0]) == 3 and len(color_mean_std[1]) == 3:
             color_mean, color_std = color_mean_std[0], color_mean_std[1]
         else:
-            color_mean_std = (
-            (0.47793125906962, 0.4303257521323044, 0.3749598901421883),
-            (0.2834475483823543, 0.27566157565723015, 0.27018971370874995),
-            ),
-            color_mean = (0.47793125906962, 0.4303257521323044, 0.3749598901421883)
-            color_std = (0.2834475483823543, 0.27566157565723015, 0.27018971370874995)
-
-            #logger.error(
-            #    "pass mean and std as tuple of tuples, or as an .yaml file"
-            #)
+            logger.error(
+                "pass mean and std as tuple of tuples, or as an .yaml file"
+            )
 
         # augmentations
         self.volume_augmentations = V.NoOp()
@@ -201,7 +208,6 @@ class SemanticSegmentationDataset(Dataset):
             )
         # mandatory color augmentation
         if add_colors:
-            # use imagenet stats
             color_mean = (0.485, 0.456, 0.406)
             color_std = (0.229, 0.224, 0.225)
             self.normalize_color = A.Normalize(mean=color_mean, std=color_std)
@@ -276,7 +282,6 @@ class SemanticSegmentationDataset(Dataset):
                 self._data = new_data
                 # new_data.append(np.load(self.data[i]["filepath"].replace("../../", "")))
             # self._data = new_data
-        print(f"############## Loaded {len(self._data)} scans from {self.data_dir}")        
 
     def splitPointCloud(self, cloud, size=50.0, stride=50, inner_core=-1):
         if inner_core == -1:
@@ -364,9 +369,10 @@ class SemanticSegmentationDataset(Dataset):
             points[:, 10:12],
         )
 
-        # Set the class label of all valid instances to 0
-        labels[labels[:,0]!=-1,0] = 0
-        labels[labels[:,0]!=0,0] = 1
+        if self.dataset_name == "scannetpp":
+            # Set the class label of all valid instances to 0
+            labels[labels[:,0]!=-1,0] = 0
+            labels[labels[:,0]!=0,0] = 1
 
         raw_coordinates = coordinates.copy()
         raw_color = color
@@ -383,6 +389,7 @@ class SemanticSegmentationDataset(Dataset):
                     labels[:, 1],
                     self._remap_from_zero(labels[:, 0].copy()),
                 )
+
                 coordinates = coordinates[new_idx]
                 color = color[new_idx]
                 labels = labels[new_idx]
@@ -393,6 +400,7 @@ class SemanticSegmentationDataset(Dataset):
                 points = points[new_idx]
 
             coordinates -= coordinates.mean(0)
+
             try:
                 coordinates += (
                     np.random.uniform(coordinates.min(0), coordinates.max(0))
@@ -559,8 +567,15 @@ class SemanticSegmentationDataset(Dataset):
         # normalize color information
         pseudo_image = color.astype(np.uint8)[np.newaxis, :, :]
         color = np.squeeze(self.normalize_color(image=pseudo_image)["image"])
+
         # prepare labels and map from 0 to 20(40)
         labels = labels.astype(np.int32)
+        if labels.size > 0:
+            labels[:, 0] = self._remap_from_zero(labels[:, 0])
+            if not self.add_instance:
+                # taking only first column, which is segmentation label, not instance
+                labels = labels[:, 0].flatten()[..., None]
+
         labels = np.hstack((labels, segments[..., None].astype(np.int32)))
 
         features = color
@@ -572,10 +587,13 @@ class SemanticSegmentationDataset(Dataset):
             else:
                 features = np.hstack((features, coordinates))
 
-        #print("########labels returned from dataloader START########")
-        #print(labels)
-        #print("max", labels.max(), "min", labels.min())
-        #print("########labels returned from dataloader END########")
+        # if self.task != "semantic_segmentation":
+        if self.data[idx]["raw_filepath"].split("/")[-2] in [
+            "scene0636_00",
+            "scene0154_00",
+        ]:
+            return self.__getitem__(0)
+
 
         return (
             coordinates,
@@ -601,8 +619,8 @@ class SemanticSegmentationDataset(Dataset):
     @staticmethod
     def _load_yaml(filepath):
         with open(filepath, encoding="utf-8") as f:
-            file = yaml.load(f, Loader=Loader)
-            #file = yaml.load(f)
+            # file = yaml.load(f, Loader=Loader)
+            file = yaml.load(f)
         return file
 
     def _select_correct_labels(self, labels, num_labels):
@@ -633,37 +651,20 @@ class SemanticSegmentationDataset(Dataset):
             raise ValueError(msg)
 
     def _remap_from_zero(self, labels):
-        #print("#################### Before remapping from zero ####################")
-        #print(labels)
-        #print("##################### label info.keys()", list(self.label_info.keys()), "#################")
-        #print("####### ignore label", self.ignore_label, "#########")
         labels[
             ~np.isin(labels, list(self.label_info.keys()))
         ] = self.ignore_label
         # remap to the range from 0
         for i, k in enumerate(self.label_info.keys()):
             labels[labels == k] = i
-        #print("#################### After remapping from zero ####################")
-        #print(labels)
-        print("########labels returned from remap_from_zero START########")
-        #print(labels)
-        print("max", labels.max(), "min", labels.min())
-        print("########labels returned from remap_from_zero END########")
         return labels
 
     def _remap_model_output(self, output):
-        #print("#################### Before remapping output ####################")
-        #print(output)
-        #print("##################### label info.keys()", list(self.label_info.keys()), "#################")
-        #print("####### ignore label", self.ignore_label, "#########")
         output = np.array(output)
         output_remapped = output.copy()
         for i, k in enumerate(self.label_info.keys()):
             output_remapped[output == i] = k
-        #print("#################### After remapping output ####################")
-        #print(output_remapped)
         return output_remapped
-        #return output
 
     def augment_individual_instance(
         self, coordinates, color, normals, labels, oversampling=1.0
