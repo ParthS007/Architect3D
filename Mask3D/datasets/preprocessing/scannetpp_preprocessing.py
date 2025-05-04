@@ -15,6 +15,8 @@ from datasets.scannet200.scannet200_constants import (
     SCANNET_COLOR_MAP_200,
     CLASS_LABELS_200,
 )
+from utils.label_utils import load_label_mapping
+
 
 
 class ScannetPreprocessing(BasePreprocessing):
@@ -61,6 +63,7 @@ class ScannetPreprocessing(BasePreprocessing):
                 "color": (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)),
                 "name": class_name,
                 "validation": True,
+                "row_id": row_id
             }
         self._save_yaml(
             self.save_dir / "label_database.yaml", label_database
@@ -152,7 +155,7 @@ class ScannetPreprocessing(BasePreprocessing):
                 try:
                     label_id = self.labels_pd.index(label200) + 1
                 except ValueError:
-                    label_id = 0  
+                    label_id = -1  
                 #label_id = self.labels_pd.index(label200)
                 labels[occupied_indices, 0] = label_id
                 #print("labels[occupied_indices, 0] after")

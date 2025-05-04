@@ -9,7 +9,7 @@ validation_mode: validation
 test_mode: validation # test  # validation
 
 # dataset
-ignore_label: 0
+ignore_label: -1
 add_raw_coordinates: true # 3dim
 add_colors: true # 3dim
 add_normals: false # 3dim
@@ -27,7 +27,7 @@ test_batch_size: 1
 cache_data: false
 
 # collation
-voxel_size: 0.05
+voxel_size: 0.075
 
 reps_per_epoch: ${general.reps_per_epoch}
 

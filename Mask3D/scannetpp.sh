@@ -23,7 +23,7 @@ export CURR_T=0.001
 
 
 srun python main_instance_segmentation.py \
-general.experiment_name="only00" \
+general.experiment_name="final" \
 general.project_name="scannetpp_train" \
 data/datasets=scannetpp \
 general.eval_on_segments=true \

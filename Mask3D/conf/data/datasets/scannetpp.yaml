@@ -7,7 +7,7 @@ train_dataset:
   volume_augmentations_path: conf/augmentation/volumentations_aug.yaml
   label_db_filepath: /work/scratch/dbagci/processed/scannetpp/label_database.yaml
   color_mean_std: /work/scratch/dbagci/processed/scannetpp/color_mean_std.yaml
-  data_percent: 0.004
+  data_percent: 1
   mode: ${data.train_mode}
   ignore_label: ${data.ignore_label}
   num_labels: ${data.num_labels}

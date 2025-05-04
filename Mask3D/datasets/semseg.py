@@ -50,7 +50,7 @@ class SemanticSegmentationDataset(Dataset):
         add_instance: Optional[bool] = False,
         num_labels: Optional[int] = -1,
         data_percent: Optional[float] = 1.0,
-        ignore_label: Optional[Union[int, Tuple[int]]] = 255,
+        ignore_label: Optional[Union[int, Tuple[int]]] = -1,
         volume_augmentations_path: Optional[str] = None,
         image_augmentations_path: Optional[str] = None,
         instance_oversampling=0,
@@ -74,7 +74,7 @@ class SemanticSegmentationDataset(Dataset):
         on_crops=False,
         eval_inner_core=-1,
         filter_out_classes=[],
-        label_offset=0,
+        label_offset=1,
         add_clip=False,
         is_elastic_distortion=True,
         color_drop=0.0,
@@ -140,7 +140,7 @@ class SemanticSegmentationDataset(Dataset):
                     id_val = key
                 self.color_map[id_val] = info["color"]
 
-            self.color_map[0] = [255, 255, 255]
+            self.color_map[-1] = [255, 255, 255]
         else:
             assert False, "dataset not known"
 
@@ -229,7 +229,7 @@ class SemanticSegmentationDataset(Dataset):
         
         # if working only on classes for validation - discard others
         self._labels = labels #self._select_correct_labels(labels, num_labels)
-
+        
         if instance_oversampling > 0:
             self.instance_data = self._load_yaml(
                 Path(label_db_filepath).parent / "instance_database.yaml"
@@ -744,27 +744,34 @@ class SemanticSegmentationDataset(Dataset):
             raise ValueError(msg)
 
     def _remap_from_zero(self, labels):
-        print("[DEBUG] REMAP FROM ZERO BEFORE")
-        print(labels)
+        #print("[DEBUG] REMAP FROM ZERO BEFORE")
+        #print(labels)
         labels[
             ~np.isin(labels, list(self.label_info.keys()))
         ] = self.ignore_label
         # remap to the range from 0
         for i, k in enumerate(self.label_info.keys()):
             labels[labels == k] = i
-        print("[DEBUG] REMAP FROM ZERO AFTER")
-        print(labels)
+        #print("[DEBUG] REMAP FROM ZERO AFTER")
+        #print(labels)
         return labels
 
     def _remap_model_output(self, output):
         print("[DEBUG] REMAP MODEL OUTPUT BEFORE")
-        print(output)
+        #print(output)
         output = np.array(output)
+        print(np.unique(output))
+        label_ids = list(self.label_info.keys())
+        #print("label_ids[:10]:", label_ids[:10])
+        print("output min/max:", output.min(), output.max())
         output_remapped = output.copy()
         for i, k in enumerate(self.label_info.keys()):
             output_remapped[output == i] = k
+        #output_remapped[output == 1] = 
         print("[DEBUG] REMAP MODEL OUTPUT AFTER")
-        print(output_remapped)
+        print(np.unique(output_remapped))
+        print("Min:", np.min(output_remapped), "Max:", np.max(output_remapped))
+        #print(output_remapped)
         return output_remapped
 
     def augment_individual_instance(
@@ -945,7 +952,7 @@ def random_around_points(
     labels,
     rate=0.2,
     noise_rate=0,
-    ignore_label=255,
+    ignore_label=-1,
 ):
     coord_indexes = sample(
         list(range(len(coordinates))), k=int(len(coordinates) * rate)
@@ -978,7 +985,7 @@ def random_around_points(
 
 
 def random_points(
-    coordinates, color, normals, labels, noise_rate=0.6, ignore_label=255
+    coordinates, color, normals, labels, noise_rate=0.6, ignore_label=-1
 ):
     max_boundary = coordinates.max(0) + 0.1
     min_boundary = coordinates.min(0) - 0.1

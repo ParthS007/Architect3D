@@ -9,7 +9,7 @@ general:
   train_on_segments: True
   eval_on_segments: True
   filter_out_instances: false
-  save_visualizations: false
+  save_visualizations: True
   visualization_point_size: 20
   decoder_id: -1
   export: false

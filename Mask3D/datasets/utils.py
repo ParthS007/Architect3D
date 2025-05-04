@@ -7,7 +7,7 @@ from random import random
 class VoxelizeCollate:
     def __init__(
         self,
-        ignore_label=255,
+        ignore_label=-1,
         voxel_size=1,
         mode="test",
         small_crops=False,
@@ -17,7 +17,7 @@ class VoxelizeCollate:
         task="instance_segmentation",
         ignore_class_threshold=100,
         filter_out_classes=[],
-        label_offset=0,
+        label_offset=1,
         num_queries=None,
     ):
         assert task in [
@@ -62,7 +62,7 @@ class VoxelizeCollate:
 class VoxelizeCollateMerge:
     def __init__(
         self,
-        ignore_label=255,
+        ignore_label=-1,
         voxel_size=1,
         mode="test",
         scenes=2,

@@ -205,11 +205,9 @@ class InstanceSegmentation(pl.LightningModule):
         return sum(losses.values())
 
     def validation_step(self, batch, batch_idx):
-        print(f"VALIDATION STEP: batch_idx={batch_idx}")
         return self.eval_step(batch, batch_idx)
 
     def export(self, pred_masks, scores, pred_classes, file_names, decoder_id):
-        print(f"Exporting predictions for: {file_names}")
         root_path = f"eval_output"
         base_path = f"{root_path}/instance_evaluation_{self.config.general.experiment_name}_{self.current_epoch}/decoder_{decoder_id}"
         pred_mask_path = f"{base_path}/pred_mask"
@@ -244,8 +242,6 @@ class InstanceSegmentation(pl.LightningModule):
         self.log_dict(results)
 
     def validation_epoch_end(self, outputs):
-        print(f"VALIDATION EPOCH END: {len(outputs)} batches processed")
-        print(f"Validation outputs: {len(outputs)}")
         self.test_epoch_end(outputs)
 
     def save_visualizations(
@@ -580,16 +576,16 @@ class InstanceSegmentation(pl.LightningModule):
         return mask
 
     def get_mask_and_scores(
-        self, mask_cls, mask_pred, num_queries=100, num_classes=18, device=None
+        self, mask_cls, mask_pred, num_queries=100, num_classes=2753, device=None
     ):
         if device is None:
             device = self.device
 
         # Debug prints: inspect logits
-        print("[DEBUG] mask_cls shape:", mask_cls.shape)
-        print("[DEBUG] mask_pred shape:", mask_pred.shape)
-        unique_logits = torch.unique(mask_cls)
-        print("[DEBUG] Unique mask_cls logits:", unique_logits.cpu().numpy())
+        #print("[DEBUG] mask_cls shape:", mask_cls.shape)
+        #print("[DEBUG] mask_pred shape:", mask_pred.shape)
+        #unique_logits = torch.unique(mask_cls)
+        #print("[DEBUG] Unique mask_cls logits:", unique_logits.cpu().numpy())
 
 
         labels = (
@@ -601,6 +597,7 @@ class InstanceSegmentation(pl.LightningModule):
 
         # Debug print on labels
         print("[DEBUG] Generated labels shape:", labels.shape)
+        print("[DEBUG] Generated labels:", labels)
 
         if self.config.general.topk_per_image != -1:
             scores_per_query, topk_indices = mask_cls.flatten(0, 1).topk(
@@ -611,11 +608,10 @@ class InstanceSegmentation(pl.LightningModule):
                 num_queries, sorted=True
             )
 
-        print("[DEBUG] scores_per_query:", scores_per_query.cpu().numpy())
-        print("[DEBUG] topk_indices:", topk_indices.cpu().numpy())
+        #print("[DEBUG] scores_per_query:", scores_per_query.cpu().numpy())
+        #print("[DEBUG] topk_indices:", topk_indices.cpu().numpy())
 
         labels_per_query = labels[topk_indices]
-        # Debug print on label assignments
         print("[DEBUG] labels_per_query:", labels_per_query.cpu().numpy())
         topk_indices = topk_indices // num_classes
         mask_pred = mask_pred[:, topk_indices]
@@ -629,7 +625,7 @@ class InstanceSegmentation(pl.LightningModule):
         score = scores_per_query * mask_scores_per_image
         classes = labels_per_query
 
-        print("[DEBUG] Final scores:", score.cpu().numpy())
+        #print("[DEBUG] Final scores:", score.cpu().numpy())
         print("[DEBUG] Final classes unique:", torch.unique(classes).cpu().numpy())
         return score, result_pred_mask, classes, heatmap
 
@@ -750,9 +746,6 @@ class InstanceSegmentation(pl.LightningModule):
                         self.model.num_classes - 1,
                     )
 
-                #scores = torch.ones(masks.shape[1])
-                #classes = torch.zeros(masks.shape[1])
-
                 masks = self.get_full_res_mask(
                     masks,
                     inverse_maps[bid],
@@ -790,8 +783,8 @@ class InstanceSegmentation(pl.LightningModule):
                     device="cpu",
                 )
 
-            masks = masks.numpy().astype(bool)
-            heatmap = heatmap.numpy().astype(bool)
+            masks = masks.numpy()
+            heatmap = heatmap.numpy()
 
             sort_scores = scores.sort(descending=True)
             sort_scores_index = sort_scores.indices.cpu().numpy()
@@ -840,16 +833,14 @@ class InstanceSegmentation(pl.LightningModule):
                 all_pred_scores.append(sort_scores_values)
                 all_heatmaps.append(sorted_heatmap)
 
-        if self.validation_dataset.dataset_name == "scannet200":
+        if self.validation_dataset.dataset_name == "scannet200" or self.validation_dataset.dataset_name == "scannetpp":
             all_pred_classes[bid][all_pred_classes[bid] == 0] = -1
             if self.config.data.test_mode != "test":
                 target_full_res[bid]["labels"][
                     target_full_res[bid]["labels"] == 0
                 ] = -1
-        #print("all_pred_classes[bid]", all_pred_classes[bid])
-        #print("len(prediction[self.decoder_id][pred_masks])", len(prediction[self.decoder_id]["pred_masks"]))
         for bid in range(len(prediction[self.decoder_id]["pred_masks"])):
-            print(f"[DEBUG] Batch {bid} - unique predicted classes after remapping:",
+            print(f"[DEBUG] Batch {bid} - unique predicted classes before remapping:",
                   np.unique(all_pred_classes[bid].cpu().numpy()))
             
             all_pred_classes[
@@ -958,7 +949,6 @@ class InstanceSegmentation(pl.LightningModule):
                         self.decoder_id,
                     )
                 else:
-                    print(f"Exporting for file: {file_names[bid]}")
                     self.export(
                         self.preds[file_names[bid]]["pred_masks"],
                         self.preds[file_names[bid]]["pred_scores"],
@@ -966,8 +956,6 @@ class InstanceSegmentation(pl.LightningModule):
                         file_names[bid],
                         self.decoder_id,
                     )
-        
-        #print("Current scan keys in self.preds:", list(self.preds.keys()))
 
     def eval_instance_epoch_end(self):
         log_prefix = f"val"
@@ -1206,7 +1194,7 @@ class InstanceSegmentation(pl.LightningModule):
         dd["val_mean_loss_dice"] = statistics.mean(
             [item for item in [v for k, v in dd.items() if "loss_dice" in k]]
         )
-        dd["val_mean_loss"] = dd["val_mean_loss_ce"] + dd["val_mean_loss_mask"] + dd["val_mean_loss_dice"]
+
         self.log_dict(dd)
 
     def configure_optimizers(self):

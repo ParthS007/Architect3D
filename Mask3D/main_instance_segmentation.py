@@ -1,3 +1,9 @@
+import torch
+from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
+from omegaconf import DictConfig
+from omegaconf.base import ContainerMetadata
+torch.serialization.add_safe_globals([ModelCheckpoint, DictConfig, ContainerMetadata])
+
 import logging
 import os
 from hashlib import md5
@@ -131,5 +137,12 @@ if __name__ == "__main__":
     #state_dict["criterion.empty_weight"] = torch.zeros(2753)
     checkpoint["state_dict"] = state_dict
     torch.save(checkpoint, '/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt')
+
+    _old_load = torch.load
+    def _patched_load(*args, **kwargs):
+        kwargs["weights_only"] = False
+        return _old_load(*args, **kwargs)
+
+    torch.load = _patched_load
 
     main()
