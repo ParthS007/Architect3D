@@ -15,7 +15,6 @@ from datasets.scannet200.scannet200_constants import (
     SCANNET_COLOR_MAP_200,
     CLASS_LABELS_200,
 )
-from utils.label_utils import load_label_mapping
 
 
 
