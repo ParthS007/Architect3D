@@ -21,17 +21,12 @@ export CURR_T=0.001
 
 
 srun python main_instance_segmentation.py \
-general.experiment_name="final_scratch" \
-general.project_name="scannetpp_train" \
+general.experiment_name="scannetpp_eval_class_agnostic" \
+general.project_name="scannetpp_eval" \
 data/datasets=scannetpp \
 general.eval_on_segments=true \
 general.train_on_segments=true \
-data.train_mode=train \
+general.train_mode=false \
 general.num_targets=2753 \
 data.num_labels=2753 \
 #general.checkpoint="/work/courses/3dv/20/OpenArchitect3D/Mask3D/scannet200_val.ckpt" \
-
-
-
-
-

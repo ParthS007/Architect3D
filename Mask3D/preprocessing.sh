@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --account=3dv
-#SBATCH --job-name=mask3d
+#SBATCH --job-name=mask3d_preprocessing
 #SBATCH --output=./jobs/preprocessing.out
 #SBATCH --error=./jobs/preprocessing.err
 #SBATCH --time=47:59:59
@@ -10,4 +10,4 @@
 #SBATCH --gpus=8
 
 
-srun python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/scratch/dbagci/processed/scannetpp"
+srun python -m datasets.preprocessing.scannetpp_preprocessing preprocess --data_dir="/work/courses/3dv/20/scannetpp"  --save_dir="/work/scratch/habaumann/3dv/processed/scannetpp"
