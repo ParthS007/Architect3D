@@ -595,9 +595,8 @@ class InstanceSegmentation(pl.LightningModule):
             .flatten(0, 1)
         )
 
-        # Debug print on labels
-        print("[DEBUG] Generated labels shape:", labels.shape)
-        print("[DEBUG] Generated labels:", labels)
+        #print("[DEBUG] Generated labels shape:", labels.shape)
+        #print("[DEBUG] Generated labels:", labels)
 
         if self.config.general.topk_per_image != -1:
             scores_per_query, topk_indices = mask_cls.flatten(0, 1).topk(
@@ -612,7 +611,7 @@ class InstanceSegmentation(pl.LightningModule):
         #print("[DEBUG] topk_indices:", topk_indices.cpu().numpy())
 
         labels_per_query = labels[topk_indices]
-        print("[DEBUG] labels_per_query:", labels_per_query.cpu().numpy())
+        #print("[DEBUG] labels_per_query:", labels_per_query.cpu().numpy())
         topk_indices = topk_indices // num_classes
         mask_pred = mask_pred[:, topk_indices]
 
