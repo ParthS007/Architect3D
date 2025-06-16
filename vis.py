@@ -2761,6 +2761,140 @@ class_names = [
     "zip up hoodie",
 ]
 
+architectural_elements = [
+    "arched ceiling", "balcony door", "bathroom door", "bathroom floor", "bathroom tiled wall", "bathroom wall",
+    "brick wall", "ceiling camp", "ceiling lapm", "ceiling pipe", "ceiling sprinkler", "ceiling vent",
+    "ceiling ventilation panel", "ceiling ventilation valve", "ceiling ventilator", "chimney", "climbing wall", "column",
+    "cubicle door", "decorative pillar", "decorative wall", "door", "door blocker", "door intercom", "door vent",
+    "door window", "doorbell chime", "doorframw", "doorway", "double door", "dropped ceiling", "duct",
+    "electric panel door", "fireplace", "floor cushion", "floor mat", "floor mounted air conditioner", "floor panel",
+    "floor scrubber", "floor vent", "folding door", "frame window screen", "french door", "french window",
+    "garage door", "glass door", "glass wall", "grated ceiling", "hall door", "indoor crane", "kitchen ceiling",
+    "kitchen floor", "kitchen tiled floor", "kitchen tiled wall", "kitchen wall", "opaque window panel", "panel door",
+    "partition wall", "pillar", "railing", "raised floor", "roof", "separation wall", "sill", "sliding door",
+    "sliding door frame", "sliding door rail", "sliding glass door", "sliding window", "stair", "stair railing",
+    "stair railling", "staircase", "staircase railing", "stairs", "stall door", "steel beam", "structural column",
+    "structural pillar", "suspended ceiling", "tile wall", "tiled floor", "tiled wall", "utility room door", "vent",
+    "wall beam", "wall board", "wall cord cover", "wall flush", "wall frame", "wall hanging", "wall intercom",
+    "wall mounted thermostat", "wall outlet", "wall strip", "wall telephone sockets", "wall thermostat", "wall unit",
+    "wall/other room", "wicket door", "window", "window blind", "window casing", "window counter",
+    "window cover panel", "window door", "window head", "window lintel", "window pane", "window sill", "window wiper",
+    "windowframe", "windows", "wooden beam", "wooden panel window"
+]
+cluster_custom_labels = {
+    1: "Electronic Displays and Connection Devices",
+    4: "Containers, Bags and Storage Items",
+    0: "Storage Furniture and Shelving Units",
+    39: "Liquid Containers and Dispensers",
+    26: "Seating and Bedding Furniture",
+    31: "Clothing and Wearable Items",
+    8: "Doors, Frames and Panels",
+    9: "Window Coverings and Rails",
+    10: "Lighting Fixtures and Mirrors",
+    2: "HVAC Systems and Ventilation",
+    -1: "Miscellaneous Items (Noise)",
+    45: "Cleaning Tools and Equipment",
+    30: "Household Machines and Appliances",
+    32: "Cleaning Textiles and Paper Products",
+    29: "Plants and Cookware",
+    49: "Drinkware and Food Containers",
+    7: "Bathroom and Plumbing Fixtures",
+    3: "Tables",
+    40: "Carts and Trolleys",
+    34: "Audio Equipment and Musical Instruments",
+    36: "Cooking Appliances",
+    42: "Mats and Rugs",
+    47: "Hooks and Hangers",
+    20: "Trays and Serving Items",
+    18: "Misspelled Objects",
+    27: "Toys and Figurines",
+    46: "Sports Equipment",
+    37: "Fans",
+    41: "Baskets",
+    22: "Decorative Items",
+    48: "Switches and Controls",
+    71: "Writing Instruments",
+    6: "Exercise Bars and Weights",
+    14: "Room Dividers and Partitions",
+    25: "Plates and Scales",
+    56: "Alarms and Intercoms",
+    89: "Fruits and Vegetables",
+    59: "Headphones and Audio Accessories",
+    60: "Cooking Pans",
+    19: "Wooden Beams and Posts",
+    21: "Toilet Fixtures",
+    68: "Kitchen Utensils and Appliances",
+    102: "Eating Utensils",
+    44: "Coffee Equipment",
+    81: "Gloves and Oven Mitts",
+    5: "Countertops and Kitchen Surfaces",
+    90: "Media Players and Discs",
+    97: "Eyewear",
+    67: "Tubes and Cylindrical Containers",
+    100: "Bread and Baked Goods",
+    12: "Ceiling Elements",
+    80: "Cameras and Imaging Devices",
+    88: "Notes and Sticky Papers",
+    16: "Signs and Signage",
+    35: "Refrigeration Appliances",
+    43: "Dishwashers and Draining Equipment",
+    11: "Structural Columns and Pillars",
+    54: "Textiles and Fabrics",
+    63: "Spray Bottles and Dispensers",
+    84: "Laptop Accessories",
+    94: "Wipers and Cleaning Tools",
+    13: "Floor Surfaces",
+    24: "Basins and Drains",
+    53: "Umbrellas and Stands",
+    61: "Binders and Binding Equipment",
+    73: "Print Media and Magazines",
+    74: "Calendars",
+    77: "Cards and Card Readers",
+    85: "First Aid Equipment",
+    93: "Chargers and Power Accessories",
+    15: "Backsplash and Wall Coverings",
+    17: "Fireplaces and Chimneys",
+    23: "Meters and Measurement Devices",
+    33: "Carpets and Rugs",
+    50: "Fire Safety Equipment",
+    55: "Smart Devices and Robotics",
+    58: "Brooms and Sweeping Tools",
+    98: "Food Items",
+    105: "Snack Packages",
+    106: "Awards and Medals",
+    28: "Entertainment Devices",
+    38: "Photos and Pictures",
+    52: "Computer Input Devices",
+    65: "Clocks",
+    66: "Canisters and Containers",
+    69: "Musical Instrument Cases",
+    72: "Gas Cylinders",
+    83: "Mixers",
+    87: "Power Banks and Strips",
+    91: "Egg Products",
+    99: "Window Shades",
+    108: "Makeup Products",
+    51: "Tripods",
+    57: "Grills",
+    62: "Towel Heaters",
+    64: "Locks and Security Devices",
+    70: "Cooking Hobs",
+    75: "Charts and Flip Charts",
+    76: "Routers and Networking",
+    78: "Milk and Beverage Cartons",
+    79: "Scientific Instruments",
+    82: "Flags",
+    86: "Cable Spools",
+    92: "Candles",
+    95: "Mounts and Brackets",
+    96: "Heating and Cooling Pads",
+    101: "Dish Items",
+    103: "Organizers and Graters",
+    104: "Docking Stations and Hubs",
+    107: "Misspelled Items",
+    109: "Pool Cues",
+    110: "Salt Containers"
+}
 
 # 1. Get Embeddings
 print("Loading sentence transformer model and encoding class names...")
@@ -2788,6 +2922,69 @@ print(f"Estimated number of noise points: {n_noise_}")
 # --- Calculate cluster representative names ---
 cluster_representative_names = {}  # Stores {cluster_id: representative_name_string}
 unique_cluster_ids_for_reps = set(clusters)
+
+# After performing DBSCAN clustering but before creating visualization
+
+# 1. First create the cluster-to-classes mapping (original direction)
+clusters_to_classes = {}
+for idx, cluster_id in enumerate(clusters):
+    if cluster_id not in clusters_to_classes:
+        clusters_to_classes[cluster_id] = []
+    clusters_to_classes[cluster_id].append(class_names[idx])
+
+# 2. Create the reverse mapping (classes-to-cluster)
+classes_to_cluster = {}
+for idx, class_name in enumerate(class_names):
+    classes_to_cluster[class_name] = clusters[idx]
+
+# Export classes-to-cluster mapping
+with open("classes_to_cluster.txt", "w") as f:
+    f.write("CLASSES TO CLUSTER MAPPING\n")
+    f.write(f"Total classes: {len(class_names)}, Total clusters: {n_clusters_}\n\n")
+    
+    # Sort alphabetically by class name
+    for class_name in sorted(classes_to_cluster.keys()):
+        cluster_id = classes_to_cluster[class_name]
+        
+        # Get representative name for the cluster if it's not noise
+        if cluster_id == -1:
+            cluster_name = "Noise"
+        else:
+            cluster_name = cluster_representative_names.get(cluster_id, f"Cluster {cluster_id}")
+        
+        f.write(f"{class_name}: Cluster {cluster_id} ({cluster_name})\n")
+
+print(f"Classes to cluster mapping saved to 'classes_to_cluster.txt'")
+
+# Also fix the cluster-to-classes export
+with open("cluster_to_classes.txt", "w") as f:
+    f.write(f"CLUSTER TO CLASSES MAPPING\n")
+    f.write(f"Total clusters: {n_clusters_}, Noise points: {n_noise_}\n\n")
+    
+    # Sort clusters by size (number of classes)
+    sorted_cluster_ids = sorted(
+        clusters_to_classes.keys(), 
+        key=lambda cid: len(clusters_to_classes[cid]), 
+        reverse=True
+    )
+    
+    for cluster_id in sorted_cluster_ids:
+        classes = clusters_to_classes[cluster_id]
+        
+        if cluster_id == -1:
+            f.write(f"CLUSTER: Noise (ID: -1)\n")
+        else:
+            representative = cluster_representative_names.get(cluster_id, f"Cluster {cluster_id}")
+            f.write(f"CLUSTER: {representative} (ID: {cluster_id})\n")
+        
+        f.write(f"Size: {len(classes)} classes\n")
+        f.write("Classes:\n")
+        
+        # Write classes in alphabetical order
+        for class_name in sorted(classes):
+            f.write(f"- {class_name}\n")
+        
+        f.write("\n" + "-"*50 + "\n\n")
 
 for cluster_id_val in unique_cluster_ids_for_reps:
     if cluster_id_val == -1:  # Skip noise points
@@ -2829,27 +3026,18 @@ for i in range(len(df)):
     point_class_name = df["class_name"].iloc[i]
     point_cluster_id = df["cluster_id_numeric"].iloc[i]
 
-    representative_cluster_name = cluster_representative_names.get(
-        point_cluster_id, f"Cluster {point_cluster_id}"
-    )
+    custom_label = cluster_custom_labels.get(point_cluster_id, f"Cluster {point_cluster_id}")
 
-    if point_cluster_id == -1:
-        cluster_info_str = "Noise"
-        cluster_display_names.append("Noise")
-    else:
-        cluster_info_str = (
-            f"Cluster: {representative_cluster_name} (ID: {point_cluster_id})"
-        )
-        cluster_display_names.append(
-            f"{representative_cluster_name} (ID: {point_cluster_id})"
-        )
+    cluster_info_str = f"Cluster: {custom_label} (ID: {point_cluster_id})"
+    cluster_display_names.append(f"{custom_label} (ID: {point_cluster_id})")
 
     hover_texts.append(f"<b>Label:</b> {point_class_name}<br><b>{cluster_info_str}</b>")
 
 df["hover_text"] = hover_texts
-df["cluster_display_name"] = (
-    cluster_display_names  # For legend and coloring by representative name + ID
-)
+df["cluster_display_name"] = cluster_display_names
+
+# Create the scatter plot
+# ...existing code...
 
 # Create the scatter plot
 fig = px.scatter(
@@ -2857,6 +3045,7 @@ fig = px.scatter(
     x="x",
     y="y",
     color="cluster_display_name",  # Color by the representative name + ID string
+    color_discrete_sequence=px.colors.qualitative.Bold,  # Use Bold color palette for better distinction
     custom_data=["hover_text"],  # Pass the fully formatted hover text
     labels={"cluster_display_name": "Cluster Information"},  # Legend title
     title=(
@@ -2877,7 +3066,123 @@ fig.update_layout(
     height=800,
 )
 
+# Add cluster labels to the plot (for the largest clusters)
+# First calculate centroids for each cluster
+centroids = {}
+unique_clusters = df['cluster_id_numeric'].unique()
+for cluster_id in unique_clusters:
+    if cluster_id == -1:  # Skip noise points
+        continue
+    cluster_points = df[df['cluster_id_numeric'] == cluster_id]
+    centroid_x = cluster_points['x'].mean()
+    centroid_y = cluster_points['y'].mean()
+    cluster_size = len(cluster_points)
+    centroids[cluster_id] = {
+        'x': centroid_x,
+        'y': centroid_y,
+        'size': cluster_size,
+        'name': cluster_representative_names[cluster_id]
+    }
+
+# Sort clusters by size and label the top 15
+# ...existing code...
+
+# Sort clusters by size and label the top 15
+sorted_clusters = sorted(centroids.items(), key=lambda x: x[1]['size'], reverse=True)
+
+for i, (cluster_id, info) in enumerate(sorted_clusters[:15]):
+    # Alternate arrow directions based on index to reduce overlap
+    arrow_direction = 40 if i % 2 == 0 else -40
+    arrow_direction_y = -30 if i % 3 == 0 else (-50 if i % 3 == 1 else -10)
+    
+    fig.add_annotation(
+        x=info['x'],
+        y=info['y'],
+        text=f"{info['name']} (ID: {cluster_id}, size: {info['size']})",  # Added size info
+        showarrow=True,
+        arrowhead=2,
+        arrowsize=1,
+        arrowwidth=2,
+        arrowcolor="#636363",
+        ax=arrow_direction,  # Vary horizontal position
+        ay=arrow_direction_y,  # Vary vertical position
+        font=dict(
+            family="Arial",
+            size=12,
+            color="black"
+        ),
+        bgcolor="rgba(255, 255, 255, 0.8)",
+        bordercolor="black",
+        borderwidth=1,
+        borderpad=4,
+    )
+
+# Also label the architectural elements in a different style
+# Use a list to track label positions to avoid overlapping
+used_positions = []
+for idx, arch_element in enumerate(architectural_elements[:10]):
+    if arch_element in df['class_name'].values:
+        element_idx = df.index[df['class_name'] == arch_element][0]
+        # Vary arrow directions for architectural elements too
+        ax_dir = 20 + (idx % 3) * 15  # Stagger horizontally
+        ay_dir = -20 - (idx % 4) * 10  # Stagger vertically
+        
+        fig.add_annotation(
+            x=df.loc[element_idx, 'x'],
+            y=df.loc[element_idx, 'y'],
+            text=arch_element,
+            showarrow=True,
+            arrowhead=1,
+            arrowsize=1,
+            arrowwidth=1.5,
+            arrowcolor="#0000CD",
+            ax=ax_dir,
+            ay=ay_dir,
+            font=dict(
+                family="Arial",
+                size=11,
+                color="#0000CD",
+                weight="bold"
+            ),
+            bgcolor="rgba(255, 255, 255, 0.9)",
+            bordercolor="#0000CD",
+            borderwidth=1,
+            borderpad=3,
+        )
+
 # Save to HTML file
+output_filename = "interactive_tsne_visualization.html"
+fig.write_html(output_filename)
+print(f"Interactive plot saved as {output_filename}")
+print("You can open this HTML file in your web browser.")
+
+# ...existing code...
+
+# After creating the figure and before writing to HTML
+
+# Save high-resolution static image (1000 DPI)
+print("Generating high-resolution image (1000 DPI)...")
+
+# Calculate appropriate dimensions for 1000 DPI
+# A standard letter size is 8.5 x 11 inches, we'll use similar proportions
+width_inches = 12  # 12 inches wide
+height_inches = 10  # 10 inches tall
+
+# Convert to pixels at 1000 DPI
+width_px = width_inches * 1000
+height_px = height_inches * 1000
+
+# Export high-res image
+img_filename = "tsne_visualization_1000dpi.png"
+fig.write_image(
+    img_filename,
+    width=width_px,
+    height=height_px,
+    scale=1,  # Already accounted for in width_px and height_px
+)
+print(f"High-resolution image saved as {img_filename}")
+
+# Continue with HTML export
 output_filename = "interactive_tsne_visualization.html"
 fig.write_html(output_filename)
 print(f"Interactive plot saved as {output_filename}")
