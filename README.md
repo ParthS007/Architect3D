@@ -1,4 +1,4 @@
-# 🏗️ Architect3D: Enhanced 3D Instance Segmentation for Architectural Scenes
+# 🏗️ Architect3D: Improving the Mask Quality for Open-Vocabulary Pipelines
 
 <div align="center">
 
