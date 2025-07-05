@@ -123,6 +123,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+sklearn-env/
 .env
 .venv
 env/
@@ -173,3 +174,6 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+scannetpp/scannetpp_ply/
+scannetpp_openmask3d-main/segment3d_openmask3d_version/openmask3d/openmask3d/jobs/

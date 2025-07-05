@@ -2950,7 +2950,7 @@ with open("classes_to_cluster.txt", "w") as f:
         if cluster_id == -1:
             cluster_name = "Noise"
         else:
-            cluster_name = cluster_representative_names.get(cluster_id, f"Cluster {cluster_id}")
+            cluster_name = cluster_custom_labels.get(cluster_id, f"Cluster {cluster_id}")
         
         f.write(f"{class_name}: Cluster {cluster_id} ({cluster_name})\n")
 
@@ -2974,7 +2974,7 @@ with open("cluster_to_classes.txt", "w") as f:
         if cluster_id == -1:
             f.write(f"CLUSTER: Noise (ID: -1)\n")
         else:
-            representative = cluster_representative_names.get(cluster_id, f"Cluster {cluster_id}")
+            representative = cluster_custom_labels.get(cluster_id, f"Cluster {cluster_id}")
             f.write(f"CLUSTER: {representative} (ID: {cluster_id})\n")
         
         f.write(f"Size: {len(classes)} classes\n")
@@ -3081,7 +3081,7 @@ for cluster_id in unique_clusters:
         'x': centroid_x,
         'y': centroid_y,
         'size': cluster_size,
-        'name': cluster_representative_names[cluster_id]
+        'name': cluster_custom_labels[cluster_id]
     }
 
 # Sort clusters by size and label the top 15
@@ -3120,6 +3120,7 @@ for i, (cluster_id, info) in enumerate(sorted_clusters[:15]):
 # Also label the architectural elements in a different style
 # Use a list to track label positions to avoid overlapping
 used_positions = []
+"""
 for idx, arch_element in enumerate(architectural_elements[:10]):
     if arch_element in df['class_name'].values:
         element_idx = df.index[df['class_name'] == arch_element][0]
@@ -3149,7 +3150,7 @@ for idx, arch_element in enumerate(architectural_elements[:10]):
             borderwidth=1,
             borderpad=3,
         )
-
+"""
 # Save to HTML file
 output_filename = "interactive_tsne_visualization.html"
 fig.write_html(output_filename)
@@ -3171,16 +3172,6 @@ height_inches = 10  # 10 inches tall
 # Convert to pixels at 1000 DPI
 width_px = width_inches * 1000
 height_px = height_inches * 1000
-
-# Export high-res image
-img_filename = "tsne_visualization_1000dpi.png"
-fig.write_image(
-    img_filename,
-    width=width_px,
-    height=height_px,
-    scale=1,  # Already accounted for in width_px and height_px
-)
-print(f"High-resolution image saved as {img_filename}")
 
 # Continue with HTML export
 output_filename = "interactive_tsne_visualization.html"

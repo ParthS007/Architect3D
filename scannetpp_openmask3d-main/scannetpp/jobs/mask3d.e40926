@@ -1,0 +1,19 @@
+  0%|          | 0/50 [00:00<?, ?it/s]/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/eval_open_vocab_100.py:106: RuntimeWarning: invalid value encountered in divide
+  mask_features_normalized = mask_features/np.linalg.norm(mask_features, axis=1)[..., None]
+  0%|          | 0/50 [00:01<?, ?it/s]
+Traceback (most recent call last):
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/eval_open_vocab_100.py", line 342, in <module>
+    test_pipeline_full_scannetpp100(    
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/eval_open_vocab_100.py", line 244, in test_pipeline_full_scannetpp100
+    pred_masks, pred_classes, pred_scores = evaluator.compute_classes_per_mask_diff_scores(masks_path=masks_path, 
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/eval_open_vocab_100.py", line 117, in compute_classes_per_mask_diff_scores
+    pred_classes = max_ind_remapped[keep_mask]
+IndexError: boolean index did not match indexed array along dimension 0; dimension is 100 but corresponding boolean dimension is 114
+Traceback (most recent call last):
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/run_eval.py", line 55, in <module>
+    main(
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/semantic/eval/eval_openmask3d.py", line 551, in main
+    results = eval_instance(scene_ids, preds_dir, gt_dir, data_root,
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/semantic/eval/eval_openmask3d.py", line 523, in eval_instance
+    raise FileNotFoundError(f'Prediction file {pred_file} does not exist')
+FileNotFoundError: Prediction file /work/courses/3dv/20/OpenArchitect3D/eval_results_architectural_classes/7b6477cb95.txt does not exist

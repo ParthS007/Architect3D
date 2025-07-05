@@ -1,0 +1,31 @@
+[INFO] Device: cuda
+[INFO] Feature size: 768
+[INFO] Getting label mapper...
+[INFO] Got label mapper...
+[INFO] Loading query sentences...
+[INFO] Loaded query sentences.
+[INFO] Computing text query embeddings...
+[INFO] Computed text query embeddings.
+[INFO] Shape of query embeddings matrix: (93, 768)
+[INFO] scannetpp100 ViT-L/14@336px a {} in a scene
+Warning! Pred export dir already exists! -  /work/courses/3dv/20/OpenArchitect3D/eval_results_architectural_classes
+## per_class_similarity_scores ## [[-0.02094481  0.00722867  0.0351759  ... -0.00530622  0.00267007
+  -0.00558046]
+ [-0.02094481  0.00722867  0.0351759  ... -0.00530622  0.00267007
+  -0.00558046]
+ [-0.01714752 -0.00548963  0.0251877  ...  0.02417356  0.00737329
+   0.00736058]
+ ...
+ [ 0.          0.          0.         ...  0.          0.
+   0.        ]
+ [ 0.          0.          0.         ...  0.          0.
+   0.        ]
+ [ 0.          0.          0.         ...  0.          0.
+   0.        ]]
+[[0.19185836 0.22119509 0.19561892 ... 0.22657501 0.20918178 0.21708492]
+ [0.19185836 0.22119509 0.19561892 ... 0.22657501 0.20918178 0.21708492]
+ [0.2250659  0.17693815 0.16952677 ... 0.1945124  0.19462626 0.18744992]
+ ...
+ [0.         0.         0.         ... 0.         0.         0.        ]
+ [0.         0.         0.         ... 0.         0.         0.        ]
+ [0.         0.         0.         ... 0.         0.         0.        ]]

@@ -1,0 +1,33 @@
+data:
+  data_root: /cluster/project/cvg/Shared_datasets/scannetpp/data
+
+  labels_path: /cluster/home/takmaza/scannetpp/LABEL_FILES/top100.txt
+  # for instance segmentation
+  use_instances: true
+  instance_labels_path: /cluster/home/takmaza/scannetpp/LABEL_FILES/top100_instance.txt
+
+  ## save multiple labels per vertex/point? ##
+  # multilabel:
+  #   max_gt: 3
+  #   multilabel_only: false
+
+  mapping_file: /cluster/home/takmaza/scannetpp/LABEL_FILES/map_benchmark.csv
+
+  list_path: /cluster/home/takmaza/scannetpp/nvs_sem_val.txt
+
+  ignore_label: -100
+
+  sample_factor: 1.0
+
+  transforms:
+    # read the mesh 
+    - add_mesh_vertices
+    # map raw labels to benchmark classes
+    - map_label_to_index
+    # use segments info to get labels on the vertices, handle multilabels
+    - get_labels_on_vertices
+    # sample points on the mesh and transfer all vertex info to the points
+    # - sample_points_on_mesh
+
+# dir to save pth training data
+out_dir: /cluster/project/mtc/takmaza/scannetpp_semantic_val_pth_NEW

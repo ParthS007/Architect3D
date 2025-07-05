@@ -1,0 +1,9 @@
+  0%|          | 0/50 [00:00<?, ?it/s]100%|██████████| 50/50 [00:00<00:00, 47489.86it/s]
+Traceback (most recent call last):
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/run_eval.py", line 55, in <module>
+    main(
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/semantic/eval/eval_openmask3d.py", line 551, in main
+    results = eval_instance(scene_ids, preds_dir, gt_dir, data_root,
+  File "/work/courses/3dv/20/scannetpp_openmask3d-main/scannetpp/semantic/eval/eval_openmask3d.py", line 523, in eval_instance
+    raise FileNotFoundError(f'Prediction file {pred_file} does not exist')
+FileNotFoundError: Prediction file /work/courses/3dv/20/OpenArchitect3D/eval_results_architectural_classes/7b6477cb95.txt does not exist

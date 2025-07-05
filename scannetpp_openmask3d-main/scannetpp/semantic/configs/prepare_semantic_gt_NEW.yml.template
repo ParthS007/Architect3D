@@ -1,0 +1,22 @@
+pth_dir: /cluster/project/mtc/takmaza/scannetpp_semantic_val_pth_NEW
+scene_list: /cluster/project/cvg/Shared_datasets/scannetpp/splits/nvs_sem_val.txt
+
+# save in npy format?
+save_npy: false
+# save in txt format?
+save_txt: true
+
+## SEMANTIC
+save_semantic: true
+sem_out_dir: /cluster/project/mtc/takmaza/scannetpp_val_gt_processed_NEW/gt_sem
+
+## INSTANCE
+save_instance: true
+# save in gt format: sem*1000 + inst id
+# save in preds format: 1 file for list of instances, 1 file for each instance 
+# same as scannet
+inst_gt_format: true
+inst_gtformat_out_dir: /cluster/project/mtc/takmaza/scannetpp_val_gt_processed_NEW/gt_inst
+
+inst_preds_format: true
+inst_predsformat_out_dir: /cluster/project/mtc/takmaza/scannetpp_val_gt_processed_NEW/gt_inst_pred_format

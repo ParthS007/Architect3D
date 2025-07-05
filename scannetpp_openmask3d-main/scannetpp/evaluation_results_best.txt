@@ -1,0 +1,100 @@
+
+################################################################
+what           :             AP         AP_50%         AP_25%
+################################################################
+table          :            nan            nan            nan
+door           :          0.000          0.000          0.000
+ceiling lamp   :          0.000          0.000          0.000
+cabinet        :          0.000          0.000          0.000
+blinds         :          0.001          0.006          0.006
+curtain        :          0.000          0.000          0.000
+chair          :          0.000          0.000          0.000
+storage cabinet:          0.000          0.000          0.000
+office chair   :          0.000          0.000          0.000
+bookshelf      :          0.000          0.000          0.000
+whiteboard     :          0.000          0.000          0.000
+window         :          0.000          0.000          0.000
+box            :          0.002          0.007          0.023
+window frame   :          0.000          0.001          0.001
+monitor        :          0.000          0.000          0.000
+shelf          :          0.000          0.000          0.022
+doorframe      :          0.000          0.000          0.000
+pipe           :          0.000          0.000          0.000
+heater         :          0.009          0.014          0.030
+kitchen cabinet:          0.000          0.000          0.000
+sofa           :          0.000          0.000          0.000
+windowsill     :          0.000          0.000          0.000
+bed            :          0.000          0.000          0.000
+trash can      :          0.000          0.000          0.000
+book           :          0.000          0.000          0.000
+plant          :          0.000          0.000          0.000
+blanket        :          0.000          0.000          0.000
+tv             :          0.000          0.000          0.000
+computer tower :          0.000          0.000          0.000
+refrigerator   :          0.000          0.000          0.000
+jacket         :          0.000          0.000          0.000
+sink           :          0.000          0.000          0.017
+bag            :          0.000          0.000          0.000
+picture        :          0.000          0.000          0.000
+pillow         :          0.000          0.000          0.000
+towel          :          0.000          0.000          0.000
+suitcase       :          0.000          0.000          0.000
+backpack       :          0.000          0.000          0.000
+crate          :          0.000          0.000          0.000
+keyboard       :          0.000          0.000          0.000
+rack           :          0.000          0.000          0.000
+toilet         :          0.000          0.000          0.000
+printer        :          0.000          0.000          0.000
+poster         :          0.000          0.000          0.000
+painting       :          0.000          0.000          0.000
+paper          :          0.000          0.000          0.000
+microwave      :          0.000          0.000          0.000
+board          :          0.000          0.000          0.000
+bottle         :            nan            nan            nan
+bucket         :          0.000          0.000          0.000
+cushion        :          0.000          0.000          0.000
+power socket   :          0.000          0.000          0.000
+shoes          :          0.000          0.000          0.000
+basket         :          0.000          0.000          0.000
+shoe rack      :          0.000          0.000          0.000
+telephone      :          0.000          0.000          0.000
+file folder    :          0.000          0.000          0.000
+cloth          :          0.000          0.000          0.000
+blind rail     :            nan            nan            nan
+laptop         :          0.000          0.000          0.000
+plant pot      :          0.000          0.000          0.000
+exhaust fan    :            nan            nan            nan
+coat hanger    :          0.000          0.000          0.000
+light switch   :            nan            nan            nan
+speaker        :            nan            nan            nan
+table lamp     :            nan            nan            nan
+air vent       :          0.000          0.000          0.000
+clothes hanger :            nan            nan            nan
+kettle         :          0.000          0.000          0.000
+shoe           :            nan            nan            nan
+container      :          0.000          0.000          0.000
+power strip    :          0.000          0.000          0.000
+mug            :          0.000          0.000          0.000
+paper bag      :          0.000          0.000          0.000
+mouse          :          0.000          0.000          0.000
+smoke detector :            nan            nan            nan
+cup            :          0.000          0.000          0.000
+cutting board  :          0.000          0.000          0.000
+toilet paper   :          0.000          0.000          0.000
+paper towel    :          0.000          0.000          0.000
+pot            :          0.000          0.000          0.000
+slippers       :          0.000          0.000          0.000
+clock          :          0.000          0.000          0.000
+pan            :          0.000          0.000          0.000
+tap            :          0.000          0.000          0.000
+jar            :          0.000          0.000          0.000
+soap dispenser :          0.000          0.000          0.000
+binder         :            nan            nan            nan
+bowl           :          0.000          0.000          0.000
+tissue box     :          0.000          0.000          0.000
+whiteboard eraser:          0.000          0.000          0.000
+socket         :          0.000          0.000          0.000
+toilet brush   :          0.000          0.000          0.000
+----------------------------------------------------------------
+average        :          0.000          0.000          0.001
+

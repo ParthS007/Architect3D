@@ -1,0 +1,123 @@
+
+################################################################
+what           :             AP         AP_50%         AP_25%
+################################################################
+arched ceiling :            nan            nan            nan
+balcony door   :          0.000          0.000          0.000
+bathroom door  :          0.000          0.000          0.000
+bathroom floor :          0.000          0.000          0.000
+bathroom tiled wall:          0.000          0.000          0.000
+bathroom wall  :          0.000          0.000          0.000
+brick wall     :          0.000          0.000          0.000
+car door       :          0.000          0.000          0.000
+ceiling camp   :          0.000          0.000          0.000
+ceiling lapm   :          0.000          0.000          0.000
+ceiling pipe   :          0.000          0.000          0.000
+ceiling sprinkler:          0.000          0.002          0.002
+ceiling vent   :          0.000          0.000          0.000
+ceiling ventilation panel:          0.000          0.000          0.000
+ceiling ventilation valve:          0.000          0.000          0.000
+ceiling ventilator:          0.000          0.000          0.000
+chimney        :          0.000          0.000          0.000
+climbing wall  :          0.000          0.000          0.000
+column         :          0.000          0.000          0.000
+cubicle door   :          0.000          0.000          0.000
+decorative pillar:          0.000          0.000          0.000
+decorative wall:          0.000          0.000          0.000
+door           :          0.000          0.000          0.000
+door blocker   :          0.000          0.000          0.000
+door intercom  :          0.000          0.000          0.000
+door vent      :          0.000          0.000          0.000
+door window    :          0.000          0.000          0.000
+doorbell chime :          0.000          0.000          0.000
+doorframw      :          0.000          0.000          0.000
+doorway        :          0.000          0.000          0.000
+double door    :          0.000          0.000          0.000
+dropped ceiling:          0.000          0.000          0.000
+duct           :          0.000          0.000          0.000
+electric panel door:          0.000          0.000          0.000
+fireplace      :          0.000          0.000          0.000
+floor cushion  :          0.000          0.000          0.000
+floor mat      :          0.000          0.000          0.000
+floor mounted air conditioner:          0.000          0.000          0.000
+floor panel    :          0.000          0.000          0.000
+floor scrubber :          0.000          0.000          0.000
+floor vent     :          0.000          0.000          0.000
+folding door   :          0.000          0.000          0.000
+frame window screen:          0.000          0.000          0.000
+french door    :          0.000          0.000          0.000
+french window  :          0.000          0.000          0.000
+garage door    :          0.000          0.000          0.000
+glass door     :          0.000          0.000          0.000
+glass wall     :          0.000          0.000          0.000
+grated ceiling :            nan            nan            nan
+hall door      :          0.000          0.000          0.000
+indoor crane   :          0.000          0.000          0.000
+kitchen ceiling:          0.000          0.000          0.000
+kitchen floor  :          0.000          0.000          0.000
+kitchen tiled floor:          0.000          0.000          0.000
+kitchen tiled wall:          0.000          0.000          0.000
+kitchen wall   :          0.000          0.000          0.000
+opaque window panel:          0.000          0.000          0.000
+panel door     :          0.000          0.000          0.000
+partition wall :            nan            nan            nan
+pillar         :          0.000          0.000          0.000
+railing        :          0.000          0.000          0.000
+raised floor   :            nan            nan            nan
+roof           :          0.000          0.000          0.000
+separation wall:            nan            nan            nan
+sill           :            nan            nan            nan
+sliding door   :            nan            nan            nan
+sliding door frame:          0.000          0.000          0.000
+sliding door rail:            nan            nan            nan
+sliding glass door:          0.000          0.000          0.000
+sliding window :            nan            nan            nan
+stair          :          0.000          0.000          0.000
+stair railing  :          0.000          0.000          0.000
+stair railling :          0.000          0.000          0.000
+staircase      :          0.000          0.000          0.000
+staircase railing:          0.000          0.000          0.000
+stairs         :            nan            nan            nan
+stall door     :          0.000          0.000          0.000
+steel beam     :          0.000          0.000          0.000
+structural column:          0.000          0.000          0.000
+structural pillar:          0.000          0.000          0.000
+suspended ceiling:          0.000          0.000          0.000
+tile wall      :          0.000          0.000          0.000
+tiled floor    :          0.000          0.000          0.000
+tiled wall     :          0.000          0.000          0.000
+utility room door:          0.000          0.000          0.000
+vent           :          0.000          0.000          0.000
+wall beam      :          0.000          0.000          0.000
+wall board     :            nan            nan            nan
+wall cord cover:          0.000          0.000          0.000
+wall flush     :          0.000          0.000          0.000
+wall frame     :          0.000          0.000          0.000
+wall hanging   :          0.000          0.000          0.000
+wall intercom  :          0.000          0.000          0.000
+wall mounted thermostat:          0.000          0.000          0.000
+wall outlet    :          0.000          0.000          0.000
+wall strip     :          0.000          0.000          0.000
+wall telephone sockets:          0.000          0.000          0.000
+wall thermostat:          0.000          0.000          0.000
+wall unit      :            nan            nan            nan
+wall/other room:            nan            nan            nan
+wicket door    :            nan            nan            nan
+window         :            nan            nan            nan
+window blind   :            nan            nan            nan
+window casing  :          0.000          0.000          0.000
+window counter :          0.000          0.000          0.000
+window cover panel:          0.000          0.000          0.000
+window door    :          0.000          0.000          0.000
+window head    :          0.000          0.000          0.000
+window lintel  :            nan            nan            nan
+window pane    :            nan            nan            nan
+window sill    :            nan            nan            nan
+window wiper   :          0.000          0.000          0.000
+windowframe    :            nan            nan            nan
+windows        :            nan            nan            nan
+wooden beam    :          0.000          0.000          0.000
+wooden panel window:            nan            nan            nan
+----------------------------------------------------------------
+average        :          0.000          0.000          0.000
+
